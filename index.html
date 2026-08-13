@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Ciclo+ Estudos</title>
+<meta name="theme-color" content="#0F1220" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" href="./icons/icon-192.png" />
+<link rel="apple-touch-icon" href="./icons/icon-192.png" />
+<style>
+:root{
+  --bg:#0F1220; --surface:#171B2E; --surface2:#1F2440; --surface3:#262C4A;
+  --border:#2A2F4D; --ink:#ECE9E1; --ink-dim:#9B98AC; --ink-faint:#6B6880;
+  --accent:#E3A72B; --accent-dim:#8A6A24; --accent-ink:#231A05;
+  --good:#4FAE7C; --good-bg:rgba(79,174,124,.15);
+  --warn:#C1543C; --warn-bg:rgba(193,84,60,.15);
+  --radius:16px; --radius-sm:10px; --radius-lg:22px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SF Mono","Roboto Mono",Consolas,Menlo,monospace;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; padding:0; }
+body{ background:var(--bg); color:var(--ink); font-family:var(--font); -webkit-font-smoothing:antialiased; overscroll-behavior:none; }
+button, input, select{ font-family:inherit; }
+#app{ max-width:480px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:92px; }
+.app-inner{ padding:0 0 24px; }
+
+.screen-header{ display:flex; align-items:center; justify-content:space-between; padding:20px 16px 10px; position:sticky; top:0; background:var(--bg); z-index:5; }
+.screen-header h1{ font-size:22px; font-weight:700; letter-spacing:-0.02em; margin:0; }
+.header-spacer{ width:32px; height:32px; display:inline-block; }
+.icon-btn{ width:32px; height:32px; border-radius:50%; border:none; background:var(--surface2); color:var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.icon-btn svg{ width:18px; height:18px; }
+
+.screen-body{ padding:0 16px; }
+
+.hero-card{ background:linear-gradient(160deg, var(--surface2), var(--surface)); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px; }
+.hero-date{ text-transform:capitalize; color:var(--ink-dim); font-size:13px; margin-bottom:10px; }
+.hero-goal-label{ font-size:13px; color:var(--ink-dim); margin-bottom:6px; }
+.hero-goal-value{ margin-top:8px; font-family:var(--mono); font-size:14px; color:var(--ink-dim); }
+
+.alert-card{ background:var(--warn-bg); border:1px solid var(--warn); color:var(--ink); padding:12px 14px; border-radius:var(--radius-sm); margin-bottom:16px; cursor:pointer; font-size:14px; }
+.alert-card strong{ color:var(--warn); }
+
+.section-title{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-dim); margin:20px 0 10px; font-weight:600; }
+.section-title.warn-title{ color:var(--warn); }
+
+.card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:14px; }
+
+.priority-card{ display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; }
+.priority-rank{ font-family:var(--mono); font-size:13px; color:var(--ink-faint); width:20px; flex-shrink:0; }
+.priority-main{ flex:1; min-width:0; }
+.priority-top{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.priority-name{ font-weight:600; font-size:15px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.priority-score{ font-family:var(--mono); font-size:13px; color:var(--accent); flex-shrink:0; }
+.priority-bar-track{ height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; margin-bottom:6px; }
+.priority-bar-fill{ height:100%; border-radius:3px; }
+.priority-meta{ font-size:11.5px; color:var(--ink-dim); }
+
+.btn{ border:none; border-radius:999px; padding:10px 18px; font-size:14px; font-weight:600; cursor:pointer; }
+.btn-block{ width:100%; display:block; margin-top:10px; text-align:center; }
+.btn-accent{ background:var(--accent); color:var(--accent-ink); }
+.btn-outline{ background:transparent; border:1px solid var(--border); color:var(--ink); }
+.btn-danger{ background:transparent; border:1px solid var(--warn); color:var(--warn); }
+.btn-danger.armed{ background:var(--warn); color:var(--ink); }
+.btn-sm{ padding:7px 12px; font-size:12.5px; }
+
+label{ display:block; font-size:12.5px; color:var(--ink-dim); margin:10px 0 5px; }
+input[type=text], input[type=number], input[type=date], select{
+  width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--ink);
+  border-radius:var(--radius-sm); padding:11px 12px; font-size:14px; appearance:none;
+}
+input:focus, select:focus, button:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.inline-form{ display:flex; gap:8px; margin-top:10px; align-items:center; }
+.inline-form input{ flex:1; }
+.unit-label{ font-size:13px; color:var(--ink-dim); white-space:nowrap; }
+
+.color-picker{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 14px; }
+.color-opt{ width:30px; height:30px; border-radius:50%; display:inline-flex; cursor:pointer; border:2px solid transparent; position:relative; }
+.color-opt input{ position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; }
+.color-opt:has(input:checked){ box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
+
+.chip{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+.chip-neutral{ background:var(--surface2); color:var(--ink-dim); }
+.chip-good{ background:var(--good-bg); color:var(--good); }
+.chip-warn{ background:var(--warn-bg); color:var(--warn); }
+.pbar{ height:8px; background:var(--surface3); border-radius:4px; overflow:hidden; }
+.pbar-fill{ height:100%; border-radius:4px; }
+.pbar-accent{ background:var(--accent); }
+.pbar-good{ background:var(--good); }
+.pbar-neutral{ background:var(--ink-faint); }
+.pbar-warn{ background:var(--warn); }
+
+.empty{ text-align:center; padding:32px 16px; color:var(--ink-dim); }
+.empty-title{ font-weight:600; color:var(--ink); margin-bottom:6px; }
+.empty-msg{ font-size:13.5px; line-height:1.5; }
+.empty-msg-sm{ font-size:13px; color:var(--ink-faint); padding:6px 0; }
+.muted-text{ font-size:13px; color:var(--ink-dim); line-height:1.5; }
+
+.dot{ width:10px; height:10px; border-radius:50%; display:inline-block; flex-shrink:0; }
+
+.tabbar{ position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; display:flex; background:var(--surface); border-top:1px solid var(--border); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:10; }
+.tab-btn{ flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink-faint); padding:6px 2px; cursor:pointer; }
+.tab-btn.active{ color:var(--accent); }
+.tab-icon svg{ width:22px; height:22px; }
+.tab-label{ font-size:10px; font-weight:600; }
+
+.subject-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+.subject-row{ display:flex; align-items:center; gap:10px; padding:14px; cursor:pointer; }
+.subject-info{ flex:1; min-width:0; }
+.subject-name{ font-weight:600; font-size:14.5px; }
+.subject-sub{ font-size:12px; color:var(--ink-dim); margin-top:2px; }
+.chev{ color:var(--ink-faint); font-size:18px; }
+.subject-expanded{ padding:0 14px 14px; border-top:1px solid var(--border); }
+.topics-list{ margin:10px 0; }
+.topic-row{ display:flex; justify-content:space-between; align-items:center; padding:7px 0; font-size:13.5px; border-bottom:1px solid var(--border); }
+.topic-row:last-child{ border-bottom:none; }
+.icon-btn-sm{ background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:13px; padding:4px; }
+.row-actions{ display:flex; gap:8px; margin-top:12px; }
+.row-actions .btn{ flex:1; }
+
+.timer-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px 20px; text-align:center; }
+.timer-subject{ display:flex; align-items:center; justify-content:center; gap:8px; font-size:14px; color:var(--ink-dim); margin-bottom:18px; }
+.timer-display{ font-family:var(--mono); font-size:44px; font-weight:600; letter-spacing:.02em; margin-bottom:8px; }
+.timer-status{ font-size:12.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em; margin-bottom:22px; }
+.timer-actions{ display:flex; gap:10px; justify-content:center; }
+.timer-actions .btn{ min-width:120px; }
+
+.review-row{ display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; margin-bottom:8px; }
+.review-info{ flex:1; min-width:0; }
+.review-name{ font-size:14px; font-weight:600; }
+.review-when{ font-size:12px; margin-top:2px; color:var(--ink-dim); }
+.review-atrasada{ color:var(--warn); }
+.review-hoje{ color:var(--accent); }
+
+.q-row{ display:flex; justify-content:space-between; font-size:13.5px; padding:8px 0; border-bottom:1px solid var(--border); }
+.q-row:last-child{ border-bottom:none; }
+.perf-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.perf-name{ font-size:13px; width:96px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.perf-row .pbar{ flex:1; }
+.perf-pct{ font-family:var(--mono); font-size:12px; width:38px; text-align:right; flex-shrink:0; }
+
+.stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:6px; }
+.stat-box{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 8px; text-align:center; }
+.stat-value{ font-family:var(--mono); font-size:17px; font-weight:700; color:var(--accent); }
+.stat-label{ font-size:10.5px; color:var(--ink-dim); margin-top:4px; }
+.dist-row{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.dist-label{ width:104px; flex-shrink:0; font-size:12.5px; display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.dist-row .pbar{ flex:1; }
+.dist-val{ font-family:var(--mono); font-size:11px; color:var(--ink-dim); width:52px; text-align:right; flex-shrink:0; }
+.evo-chart{ display:flex; align-items:flex-end; justify-content:space-between; height:100px; padding-top:10px; }
+.evo-col{ display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; justify-content:flex-end; height:100%; }
+.evo-bar{ width:14px; background:var(--accent); border-radius:4px; }
+.evo-label{ font-size:10px; color:var(--ink-faint); text-transform:uppercase; }
+
+.cal-nav{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.cal-month-label{ font-weight:600; text-transform:capitalize; }
+.cal-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; color:var(--ink-faint); margin-bottom:4px; }
+.cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:14px; }
+.cal-cell{ aspect-ratio:1; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; background:var(--surface); border:1px solid transparent; }
+.cal-cell.empty{ background:none; cursor:default; }
+.cal-cell.today{ border-color:var(--accent); }
+.cal-cell.selected{ background:var(--surface3); }
+.cal-day-num{ font-size:12.5px; }
+.cal-dots{ display:flex; gap:2px; height:6px; margin-top:2px; }
+.cal-dot{ width:5px; height:5px; border-radius:50%; display:inline-block; }
+.cal-dot.session{ background:var(--accent); }
+.cal-dot.review{ background:var(--warn); }
+
+.menu-grid{ display:flex; flex-direction:column; gap:8px; }
+.menu-item{ display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:15px 16px; color:var(--ink); font-size:14.5px; font-weight:600; cursor:pointer; width:100%; text-align:left; }
+.menu-item .chev{ color:var(--ink-faint); }
+
+.goal-val{ font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); margin:6px 0; }
+
+.crash{ padding:40px 20px; text-align:center; }
+.crash pre{ white-space:pre-wrap; color:var(--warn); font-size:12px; text-align:left; background:var(--surface); padding:12px; border-radius:8px; }
+
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/12.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+'use strict';
+
+// ---- Firebase (sincronização) ----------------------------------------
+// Cole aqui a configuração do seu projeto Firebase (Configurações do
+// projeto > Geral > "Seus apps" > app Web). Enquanto ficar com o valor
+// padrão abaixo, o app funciona normalmente só com armazenamento local.
+var FIREBASE_CONFIG = {
+  apiKey: "COLOQUE_AQUI",
+  authDomain: "COLOQUE_AQUI",
+  projectId: "COLOQUE_AQUI",
+  storageBucket: "COLOQUE_AQUI",
+  messagingSenderId: "COLOQUE_AQUI",
+  appId: "COLOQUE_AQUI"
+};
+var SYNCED_MARKER_KEY = 'ciclo_mais_synced_uid_v1';
+
+var firebaseConfigured = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== 'COLOQUE_AQUI');
+var auth = null, db = null;
+if (firebaseConfigured && typeof firebase !== 'undefined'){
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+  } catch(e){ console.error('Erro ao iniciar Firebase:', e); firebaseConfigured = false; auth=null; db=null; }
+} else if (firebaseConfigured){
+  firebaseConfigured = false; // scripts do Firebase não carregaram (offline/bloqueado)
+}
+
+var currentUser = null;
+var syncBusy = false;
+var syncErrorMsg = null;
+var lastSyncAt = null;
+var unsubscribeSnapshot = null;
+var pushDebounceTimer = null;
+var applyingRemoteUpdate = false;
+
+var STORAGE_KEY = 'ciclo_mais_estado_v1';
+var LADDER = [2,7,16,35];
+var SUBJECT_COLORS = ['#E3A72B','#4FAE7C','#5B8DEF','#C1543C','#9B6BD6','#3FB6C9','#D68A3D','#8AA5D6'];
+var STUDY_TYPES = ['Teoria','Questões','Revisão','Vídeo-aula','Leitura','Resumo'];
+
+var hasClaudeStorage = (typeof window.storage !== 'undefined' && window.storage !== null);
+
+function storageLoad(){
+  if (hasClaudeStorage){
+    return window.storage.get(STORAGE_KEY).then(function(res){
+      return (res && res.value) ? JSON.parse(res.value) : null;
+    }).catch(function(){ return null; });
+  }
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    return Promise.resolve(raw ? JSON.parse(raw) : null);
+  } catch(e){ return Promise.resolve(null); }
+}
+
+function storageSave(data){
+  var json = JSON.stringify(data);
+  if (hasClaudeStorage){
+    return window.storage.set(STORAGE_KEY, json).catch(function(){
+      try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+    });
+  }
+  try{ localStorage.setItem(STORAGE_KEY, json); }catch(e){}
+  return Promise.resolve();
+}
+
+function defaultState(){
+  return {
+    subjects: [], topics: [], sessions: [], questionLogs: [], reviews: [],
+    goals: { daily: 120, weekly: 600, monthly: 2400 },
+    activeTimer: null,
+    ui: { tab:'hoje', subScreen:null, calMonth:null, expandedSubject:null, selectedCalDay:null,
+          editingSubject:null, confirmDeleteSubject:null, confirmReset:false, preselectSubject:null,
+          syncConflict:null }
+  };
+}
+
+var state = defaultState();
+
+function uid(){ return 'id_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
+function todayStr(){
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function addDaysStr(dateStr, n){
+  var p = dateStr.split('-').map(Number);
+  var dt = new Date(p[0], p[1]-1, p[2]);
+  dt.setDate(dt.getDate()+n);
+  return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+}
+function daysDiffStr(fromStr, toStr){
+  var a = fromStr.split('-').map(Number), b = toStr.split('-').map(Number);
+  var da = new Date(a[0],a[1]-1,a[2]).getTime(), db = new Date(b[0],b[1]-1,b[2]).getTime();
+  return Math.round((db-da)/86400000);
+}
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function fmtDur(totalSeconds){
+  totalSeconds = Math.max(0, Math.round(totalSeconds));
+  var h = Math.floor(totalSeconds/3600), m = Math.floor((totalSeconds%3600)/60);
+  if (h>0) return h + 'h ' + m + 'min';
+  if (m>0) return m + 'min';
+  return totalSeconds + 's';
+}
+function fmtHMS(totalSeconds){
+  totalSeconds = Math.max(0, Math.round(totalSeconds));
+  var h = Math.floor(totalSeconds/3600), m = Math.floor((totalSeconds%3600)/60), s = totalSeconds%60;
+  return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function fmtDateBR(dateStr){ var p = dateStr.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function fmtPct(x){ return Math.round(x*100) + '%'; }
+
+function subjectById(id){ return state.subjects.find(function(s){ return s.id===id; }); }
+function topicById(id){ return state.topics.find(function(t){ return t.id===id; }); }
+function topicsForSubject(subjectId){ return state.topics.filter(function(t){ return t.subjectId===subjectId; }); }
+
+function accuracyForSubject(subjectId){
+  var logs = state.questionLogs.filter(function(q){ return q.subjectId===subjectId; });
+  var total = logs.reduce(function(s,q){ return s+q.total; },0);
+  var correct = logs.reduce(function(s,q){ return s+q.correct; },0);
+  if (total===0) return null;
+  return correct/total;
+}
+
+function lastActivityDateForSubject(subjectId){
+  var last = null;
+  state.sessions.filter(function(s){ return s.subjectId===subjectId; }).forEach(function(s){
+    if (!last || s.date > last) last = s.date;
+  });
+  state.reviews.filter(function(r){ return r.subjectId===subjectId && r.done && r.doneDate; }).forEach(function(r){
+    if (!last || r.doneDate > last) last = r.doneDate;
+  });
+  return last;
+}
+
+function computePriority(subject){
+  var today = todayStr();
+  var acc = accuracyForSubject(subject.id);
+  var accuracy = acc===null ? 0.5 : acc;
+  var deficitFactor = 1 + (1-accuracy)*4;
+  var last = lastActivityDateForSubject(subject.id);
+  var daysSince = last ? Math.max(0, daysDiffStr(last, today)) : 999;
+  var timeFactor = 1 + Math.min(daysSince/7, 4);
+  var priority = subject.weight * subject.difficulty * deficitFactor * timeFactor;
+  return { priority: priority, accuracy: acc, daysSince: last ? daysSince : null, deficitFactor: deficitFactor, timeFactor: timeFactor };
+}
+
+function rankedSubjects(){
+  return state.subjects.map(function(s){ return { subject: s, calc: computePriority(s) }; })
+    .sort(function(a,b){ return b.calc.priority - a.calc.priority; });
+}
+
+function sessionsInRange(fromStr, toStr){
+  return state.sessions.filter(function(s){ return s.date >= fromStr && s.date <= toStr; });
+}
+function secondsInRange(fromStr, toStr){
+  return sessionsInRange(fromStr,toStr).reduce(function(sum,s){ return sum+s.seconds; },0);
+}
+function secondsToday(){ var t=todayStr(); return secondsInRange(t,t); }
+function startOfWeekStr(){
+  var d = new Date(); d.setDate(d.getDate()-d.getDay());
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function startOfMonthStr(){
+  var d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01';
+}
+function secondsThisWeek(){ return secondsInRange(startOfWeekStr(), todayStr()); }
+function secondsThisMonth(){ return secondsInRange(startOfMonthStr(), todayStr()); }
+
+function currentStreak(){
+  var daysWithSession = new Set(state.sessions.map(function(s){ return s.date; }));
+  var streak = 0, cursor = todayStr();
+  if (!daysWithSession.has(cursor)) cursor = addDaysStr(cursor,-1);
+  while (daysWithSession.has(cursor)){ streak++; cursor = addDaysStr(cursor,-1); }
+  return streak;
+}
+
+function overdueReviews(){
+  var t = todayStr();
+  return state.reviews.filter(function(r){ return !r.done && r.dueDate < t; })
+    .sort(function(a,b){ return a.dueDate < b.dueDate ? -1 : 1; });
+}
+function todayReviews(){
+  var t = todayStr();
+  return state.reviews.filter(function(r){ return !r.done && r.dueDate === t; });
+}
+function upcomingReviews(days){
+  var t = todayStr(), limit = addDaysStr(t, days);
+  return state.reviews.filter(function(r){ return !r.done && r.dueDate > t && r.dueDate <= limit; })
+    .sort(function(a,b){ return a.dueDate < b.dueDate ? -1 : 1; });
+}
+
+function scheduleReviewIfNeeded(subjectId, topicId){
+  var tId = topicId || null;
+  var exists = state.reviews.some(function(r){ return !r.done && r.subjectId===subjectId && (r.topicId||null)===tId; });
+  if (exists) return;
+  state.reviews.push({ id:uid(), subjectId:subjectId, topicId:tId, dueDate:addDaysStr(todayStr(), LADDER[0]), stage:0, done:false, doneDate:null });
+}
+
+function completeReview(reviewId, seconds){
+  var r = state.reviews.find(function(x){ return x.id===reviewId; });
+  if (!r) return;
+  r.done = true; r.doneDate = todayStr();
+  if (seconds && seconds>0){
+    state.sessions.push({ id:uid(), subjectId:r.subjectId, topicId:r.topicId, type:'Revisão', seconds:seconds, date:todayStr(), source:'revisao', ts:Date.now() });
+  }
+  var nextStage = r.stage+1;
+  var interval = LADDER[Math.min(nextStage, LADDER.length-1)];
+  state.reviews.push({ id:uid(), subjectId:r.subjectId, topicId:r.topicId, dueDate:addDaysStr(todayStr(), interval), stage:nextStage, done:false, doneDate:null });
+}
+
+function persist(){ storageSave(state); if (!applyingRemoteUpdate) scheduleCloudPush(); }
+function persistLocalOnly(){ storageSave(state); }
+
+function smallGet(key){
+  if (hasClaudeStorage){
+    return window.storage.get(key).then(function(r){ return r?r.value:null; }).catch(function(){ return null; });
+  }
+  try{ return Promise.resolve(localStorage.getItem(key)); }catch(e){ return Promise.resolve(null); }
+}
+function smallSet(key, value){
+  if (hasClaudeStorage){ return window.storage.set(key, value).catch(function(){}); }
+  try{ localStorage.setItem(key, value); }catch(e){}
+  return Promise.resolve();
+}
+
+function applyCloudPayload(payload){
+  try{
+    var incoming = JSON.parse(payload);
+    if (!incoming || !Array.isArray(incoming.subjects)) return;
+    var d = defaultState();
+    applyingRemoteUpdate = true;
+    state = Object.assign(d, incoming, { ui: state.ui, activeTimer: state.activeTimer });
+    persistLocalOnly();
+  } catch(e){ console.error(e); }
+  finally { applyingRemoteUpdate = false; }
+}
+
+function scheduleCloudPush(){
+  if (!currentUser || !db) return;
+  clearTimeout(pushDebounceTimer);
+  pushDebounceTimer = setTimeout(function(){ pushToCloud(); }, 1200);
+}
+
+function pushToCloud(){
+  if (!currentUser || !db) return;
+  var toSend = Object.assign({}, state, { activeTimer: null });
+  var payload = JSON.stringify(toSend);
+  db.collection('users').doc(currentUser.uid).set({
+    payload: payload,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    lastSyncAt = Date.now();
+    var el = document.getElementById('syncStatusLine');
+    if (el) el.textContent = 'Sincronizado às ' + new Date(lastSyncAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }).catch(function(e){ console.error(e); syncErrorMsg = 'Falha ao sincronizar. Vamos tentar de novo em breve.'; });
+}
+
+function startRealtimeListener(uid){
+  stopRealtimeListener();
+  unsubscribeSnapshot = db.collection('users').doc(uid).onSnapshot(function(snap){
+    if (!snap.exists) return;
+    var data = snap.data();
+    if (!data || !data.payload) return;
+    applyCloudPayload(data.payload);
+    lastSyncAt = Date.now();
+    render();
+  }, function(err){ console.error(err); });
+}
+function stopRealtimeListener(){
+  if (unsubscribeSnapshot){ unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+}
+
+function handleSignedIn(user){
+  currentUser = user; syncBusy = false; syncErrorMsg = null;
+  render();
+  smallGet(SYNCED_MARKER_KEY).then(function(linkedUid){
+    db.collection('users').doc(user.uid).get().then(function(docSnap){
+      var hasCloudData = docSnap.exists && docSnap.data() && docSnap.data().payload;
+      var hasLocalData = state.subjects.length>0 || state.sessions.length>0;
+
+      if (linkedUid === user.uid){
+        if (hasCloudData) applyCloudPayload(docSnap.data().payload);
+        startRealtimeListener(user.uid);
+        lastSyncAt = Date.now();
+        render();
+        return;
+      }
+      if (hasCloudData && hasLocalData){
+        state.ui.syncConflict = { payload: docSnap.data().payload };
+        render();
+        return;
+      }
+      if (hasCloudData && !hasLocalData){ applyCloudPayload(docSnap.data().payload); }
+      smallSet(SYNCED_MARKER_KEY, user.uid);
+      startRealtimeListener(user.uid);
+      if (!hasCloudData) pushToCloud();
+      render();
+    }).catch(function(e){
+      console.error(e);
+      syncErrorMsg = 'Não foi possível verificar seus dados na nuvem.';
+      render();
+    });
+  });
+}
+
+function signInWithGoogle(){
+  if (!auth) return;
+  syncErrorMsg = null; syncBusy = true; render();
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(function(e){
+    console.error(e);
+    syncErrorMsg = 'Não foi possível entrar. Tente novamente.';
+    syncBusy = false; render();
+  });
+}
+function signOutUser(){
+  stopRealtimeListener();
+  if (auth) auth.signOut();
+  currentUser = null; render();
+}
+
+function chip(text, tone){ return '<span class="chip chip-'+(tone||'neutral')+'">'+esc(text)+'</span>'; }
+function progressBar(pct, tone){
+  var p = Math.max(0, Math.min(100, Math.round(pct)));
+  return '<div class="pbar"><div class="pbar-fill pbar-'+(tone||'accent')+'" style="width:'+p+'%"></div></div>';
+}
+function emptyState(title, msg){
+  return '<div class="empty"><div class="empty-title">'+esc(title)+'</div><div class="empty-msg">'+esc(msg)+'</div></div>';
+}
+function subjectColorDot(subject){ return '<span class="dot" style="background:'+(subject?subject.color:'#555')+'"></span>'; }
+
+var ICONS = {
+  hoje: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>',
+  disciplinas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="7" x2="19" y2="7"/><line x1="5" y1="12" x2="16" y2="12"/><line x1="5" y1="17" x2="13" y2="17"/></svg>',
+  cronometro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="7"/><line x1="12" y1="13" x2="12" y2="9"/><line x1="9" y1="3" x2="15" y2="3"/></svg>',
+  revisoes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7" stroke-dasharray="8 5"/></svg>',
+  mais: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="1.8"/><circle cx="12" cy="6" r="1.8"/><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+};
+
+function screenHeader(title, opts){
+  opts = opts || {};
+  var back = opts.back ? '<button class="icon-btn" data-action="'+opts.back+'">'+ICONS.back+'</button>' : '<span class="header-spacer"></span>';
+  return '<header class="screen-header">'+back+'<h1>'+esc(title)+'</h1><span class="header-spacer"></span></header>';
+}
+
+function renderTabBar(){
+  var tabs = [
+    {key:'hoje', label:'Hoje', icon:ICONS.hoje},
+    {key:'disciplinas', label:'Disciplinas', icon:ICONS.disciplinas},
+    {key:'cronometro', label:'Cronômetro', icon:ICONS.cronometro},
+    {key:'revisoes', label:'Revisões', icon:ICONS.revisoes},
+    {key:'mais', label:'Mais', icon:ICONS.mais}
+  ];
+  return '<nav class="tabbar">' + tabs.map(function(t){
+    return '<button class="tab-btn '+(state.ui.tab===t.key?'active':'')+'" data-action="goto-tab" data-tab="'+t.key+'">'+
+      '<span class="tab-icon">'+t.icon+'</span><span class="tab-label">'+t.label+'</span></button>';
+  }).join('') + '</nav>';
+}
+
+function renderHoje(){
+  var ranked = rankedSubjects();
+  var goalDaily = state.goals.daily*60;
+  var todaySec = secondsToday();
+  var pct = goalDaily>0 ? (todaySec/goalDaily*100) : 0;
+  var overdue = overdueReviews();
+  var dueToday = todayReviews();
+
+  var rankedHtml;
+  if (ranked.length===0){
+    rankedHtml = emptyState('Nenhuma disciplina ainda', 'Cadastre suas disciplinas com peso e dificuldade pra eu calcular o que priorizar hoje.') +
+      '<button class="btn btn-accent btn-block" data-action="goto-tab" data-tab="disciplinas">+ Cadastrar disciplina</button>';
+  } else {
+    var maxP = ranked[0].calc.priority || 1;
+    rankedHtml = ranked.map(function(r,i){
+      var s = r.subject;
+      var accTxt = r.calc.accuracy===null ? 'sem dados de questões' : fmtPct(r.calc.accuracy)+' de acerto';
+      var timeTxt = r.calc.daysSince===null ? 'nunca estudada' : (r.calc.daysSince===0?'estudada hoje':r.calc.daysSince+'d sem atividade');
+      var barPct = Math.max(6, r.calc.priority/maxP*100);
+      return '<div class="priority-card">'+
+        '<div class="priority-rank">#'+(i+1)+'</div>'+
+        '<div class="priority-main">'+
+          '<div class="priority-top">'+subjectColorDot(s)+'<span class="priority-name">'+esc(s.name)+'</span><span class="priority-score">'+r.calc.priority.toFixed(1)+'</span></div>'+
+          '<div class="priority-bar-track"><div class="priority-bar-fill" style="width:'+barPct+'%; background:'+s.color+'"></div></div>'+
+          '<div class="priority-meta">'+esc(accTxt)+' · '+esc(timeTxt)+' · peso '+s.weight+' · dificuldade '+s.difficulty+'</div>'+
+        '</div>'+
+        '<button class="btn btn-sm btn-accent" data-action="start-from-priority" data-subject="'+s.id+'">Iniciar</button>'+
+      '</div>';
+    }).join('');
+  }
+
+  var remindersHtml = '';
+  if ((overdue.length+dueToday.length)>0){
+    remindersHtml = '<div class="alert-card" data-action="goto-tab" data-tab="revisoes"><strong>'+(overdue.length+dueToday.length)+'</strong> revisão(ões) pendente(s) hoje'+(overdue.length>0?' · '+overdue.length+' atrasada(s)':'')+'</div>';
+  }
+
+  var dateLabel = new Date().toLocaleDateString('pt-BR',{weekday:'long', day:'numeric', month:'long'});
+
+  return screenHeader('Ciclo+') +
+    '<div class="screen-body">'+
+      '<div class="hero-card"><div class="hero-date">'+esc(dateLabel)+'</div><div class="hero-goal-label">Meta de hoje</div>'+
+      progressBar(pct, pct>=100?'good':'accent')+
+      '<div class="hero-goal-value">'+fmtDur(todaySec)+' de '+fmtDur(goalDaily)+'</div></div>'+
+      remindersHtml+
+      '<div class="section-title">Prioridade de hoje</div>'+
+      rankedHtml+
+    '</div>';
+}
+
+function renderDisciplinas(){
+  var list = state.subjects.map(function(s){
+    var expanded = state.ui.expandedSubject === s.id;
+    var acc = accuracyForSubject(s.id);
+    var topics = topicsForSubject(s.id);
+    var topicsHtml = topics.length ? topics.map(function(t){
+      return '<div class="topic-row"><span>'+esc(t.name)+'</span><button class="icon-btn-sm" data-action="delete-topic" data-id="'+t.id+'">✕</button></div>';
+    }).join('') : '<div class="empty-msg-sm">Nenhum assunto ainda.</div>';
+
+    var expandedHtml = '';
+    if (expanded){
+      expandedHtml = '<div class="subject-expanded">'+
+        '<div class="topics-list">'+topicsHtml+'</div>'+
+        '<form class="inline-form" data-action="add-topic" data-subject="'+s.id+'">'+
+          '<input type="text" name="topicName" placeholder="Novo assunto" required />'+
+          '<button class="btn btn-sm btn-outline" type="submit">+ Assunto</button>'+
+        '</form>'+
+        '<div class="row-actions">'+
+          '<button class="btn btn-sm btn-outline" data-action="edit-subject" data-id="'+s.id+'">Editar</button>'+
+          '<button class="btn btn-sm '+(state.ui.confirmDeleteSubject===s.id?'btn-danger armed':'btn-danger')+'" data-action="delete-subject" data-id="'+s.id+'">'+(state.ui.confirmDeleteSubject===s.id?'Confirmar':'Excluir')+'</button>'+
+        '</div>'+
+      '</div>';
+    }
+
+    return '<div class="subject-card">'+
+      '<div class="subject-row" data-action="toggle-subject" data-id="'+s.id+'">'+
+        subjectColorDot(s)+
+        '<div class="subject-info"><div class="subject-name">'+esc(s.name)+'</div>'+
+        '<div class="subject-sub">peso '+s.weight+' · dificuldade '+s.difficulty+(acc!==null?' · '+fmtPct(acc)+' acerto':'')+' · '+topics.length+' assunto(s)</div></div>'+
+        '<span class="chev">'+(expanded?'−':'+')+'</span>'+
+      '</div>'+expandedHtml+
+    '</div>';
+  }).join('');
+
+  var editing = state.ui.editingSubject ? subjectById(state.ui.editingSubject) : null;
+  var formHtml = '<div class="card"><div class="section-title">'+(editing?'Editar disciplina':'Nova disciplina')+'</div>'+
+    '<form data-action="add-subject">'+
+      '<input type="hidden" name="editId" value="'+(editing?editing.id:'')+'" />'+
+      '<label>Nome</label>'+
+      '<input type="text" name="name" placeholder="Ex: Direito Constitucional" value="'+(editing?esc(editing.name):'')+'" required />'+
+      '<div class="form-row">'+
+        '<div><label>Peso na prova</label><select name="weight">'+[1,2,3,4,5].map(function(n){ return '<option value="'+n+'" '+((editing?editing.weight:3)===n?'selected':'')+'>'+n+'</option>'; }).join('')+'</select></div>'+
+        '<div><label>Dificuldade</label><select name="difficulty">'+[1,2,3,4,5].map(function(n){ return '<option value="'+n+'" '+((editing?editing.difficulty:3)===n?'selected':'')+'>'+n+'</option>'; }).join('')+'</select></div>'+
+      '</div>'+
+      '<label>Cor</label>'+
+      '<div class="color-picker">'+SUBJECT_COLORS.map(function(c,i){ return '<label class="color-opt" style="background:'+c+'"><input type="radio" name="color" value="'+c+'" '+((editing?editing.color===c:i===0)?'checked':'')+'/></label>'; }).join('')+'</div>'+
+      '<button class="btn btn-accent btn-block" type="submit">'+(editing?'Salvar alterações':'Adicionar disciplina')+'</button>'+
+      (editing?'<button type="button" class="btn btn-outline btn-block" data-action="cancel-edit-subject">Cancelar</button>':'')+
+    '</form></div>';
+
+  return screenHeader('Disciplinas') + '<div class="screen-body">' + (state.subjects.length?list:emptyState('Nenhuma disciplina','Adicione as matérias do seu edital com peso (importância) e dificuldade.')) + formHtml + '</div>';
+}
+
+function renderCronometro(){
+  var timer = state.activeTimer;
+  var body;
+  if (!timer){
+    if (state.subjects.length===0){
+      body = '<div class="card">'+emptyState('Cadastre uma disciplina primeiro','Vá em Disciplinas para adicionar sua primeira matéria.')+'</div>';
+    } else {
+      var subjOptions = state.subjects.map(function(s){ return '<option value="'+s.id+'" '+(state.ui.preselectSubject===s.id?'selected':'')+'>'+esc(s.name)+'</option>'; }).join('');
+      body = '<div class="card">'+
+        '<label>Disciplina</label><select id="timerSubject">'+subjOptions+'</select>'+
+        '<label>Assunto (opcional)</label><select id="timerTopic"><option value="">—</option></select>'+
+        '<label>Tipo de estudo</label><select id="timerType">'+STUDY_TYPES.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('')+'</select>'+
+        '<button class="btn btn-accent btn-block" data-action="start-timer">Iniciar cronômetro</button>'+
+      '</div>';
+    }
+  } else {
+    var subject = subjectById(timer.subjectId);
+    var topic = timer.topicId ? topicById(timer.topicId) : null;
+    body = '<div class="timer-card">'+
+      '<div class="timer-subject">'+subjectColorDot(subject)+' '+esc(subject?subject.name:'')+(topic?' · '+esc(topic.name):'')+'</div>'+
+      '<div class="timer-display" id="timerDisplay">00:00:00</div>'+
+      '<div class="timer-status">'+(timer.pausedAt?'Pausado':'Em andamento')+'</div>'+
+      '<div class="timer-actions">'+
+        (timer.pausedAt ? '<button class="btn btn-accent" data-action="resume-timer">Retomar</button>' : '<button class="btn btn-outline" data-action="pause-timer">Pausar</button>')+
+        '<button class="btn btn-danger" data-action="stop-timer">Finalizar</button>'+
+      '</div></div>';
+  }
+  return screenHeader('Cronômetro') + '<div class="screen-body">' + body + '</div>';
+}
+
+function reviewRow(r, tone){
+  var s = subjectById(r.subjectId);
+  var t = r.topicId ? topicById(r.topicId) : null;
+  var label = tone==='atrasada' ? ('atrasada há '+Math.abs(daysDiffStr(r.dueDate, todayStr()))+'d')
+    : tone==='hoje' ? 'hoje' : ('em '+daysDiffStr(todayStr(), r.dueDate)+'d');
+  return '<div class="review-row">'+subjectColorDot(s)+
+    '<div class="review-info"><div class="review-name">'+esc(s?s.name:'?')+(t?' · '+esc(t.name):'')+'</div>'+
+    '<div class="review-when review-'+tone+'">'+label+'</div></div>'+
+    '<button class="btn btn-sm btn-accent" data-action="complete-review" data-id="'+r.id+'">Revisado</button>'+
+  '</div>';
+}
+
+function renderRevisoes(){
+  var overdue = overdueReviews(), today = todayReviews(), upcoming = upcomingReviews(14);
+  var html = '';
+  if (overdue.length===0 && today.length===0 && upcoming.length===0){
+    html = emptyState('Sem revisões por aqui', 'Revisões são agendadas automaticamente quando você registra um estudo.');
+  } else {
+    if (overdue.length) html += '<div class="section-title warn-title">Atrasadas</div>' + overdue.map(function(r){ return reviewRow(r,'atrasada'); }).join('');
+    if (today.length) html += '<div class="section-title">Hoje</div>' + today.map(function(r){ return reviewRow(r,'hoje'); }).join('');
+    if (upcoming.length) html += '<div class="section-title">Próximos 14 dias</div>' + upcoming.map(function(r){ return reviewRow(r,'futuro'); }).join('');
+  }
+  return screenHeader('Revisões') + '<div class="screen-body">' + html + '</div>';
+}
+
+function renderRegistro(){
+  var subjOptions = state.subjects.map(function(s){ return '<option value="'+s.id+'">'+esc(s.name)+'</option>'; }).join('');
+  var body;
+  if (state.subjects.length===0){ body = emptyState('Cadastre uma disciplina primeiro',''); }
+  else {
+    body = '<form class="card" data-action="add-manual-session">'+
+      '<label>Disciplina</label><select name="subjectId" id="manualSubject">'+subjOptions+'</select>'+
+      '<label>Assunto (opcional)</label><select name="topicId" id="manualTopic"><option value="">—</option></select>'+
+      '<label>Tipo de estudo</label><select name="type">'+STUDY_TYPES.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('')+'</select>'+
+      '<div class="form-row"><div><label>Data</label><input type="date" name="date" value="'+todayStr()+'" max="'+todayStr()+'" required /></div>'+
+      '<div><label>Duração (min)</label><input type="number" name="minutes" min="1" required /></div></div>'+
+      '<button class="btn btn-accent btn-block" type="submit">Registrar estudo</button>'+
+    '</form>';
+  }
+  return screenHeader('Registro manual', {back:'back-to-more'}) + '<div class="screen-body">' + body + '</div>';
+}
+
+function renderQuestoes(){
+  var subjOptions = state.subjects.map(function(s){ return '<option value="'+s.id+'">'+esc(s.name)+'</option>'; }).join('');
+  var summary = state.subjects.map(function(s){
+    var acc = accuracyForSubject(s.id);
+    if (acc===null) return null;
+    var tone = acc>=0.7?'good':(acc<0.5?'warn':'neutral');
+    return '<div class="perf-row">'+subjectColorDot(s)+'<span class="perf-name">'+esc(s.name)+'</span>'+progressBar(acc*100,tone)+'<span class="perf-pct">'+fmtPct(acc)+'</span></div>';
+  }).filter(Boolean).join('');
+
+  var recent = state.questionLogs.slice().sort(function(a,b){ return b.ts-a.ts; }).slice(0,8).map(function(q){
+    var s = subjectById(q.subjectId);
+    return '<div class="q-row"><span>'+esc(s?s.name:'?')+'</span><span>'+q.correct+'/'+q.total+' · '+fmtDateBR(q.date)+'</span></div>';
+  }).join('');
+
+  var formBlock = state.subjects.length===0 ? emptyState('Cadastre uma disciplina primeiro','') :
+    '<form data-action="add-questions">'+
+      '<label>Disciplina</label><select name="subjectId">'+subjOptions+'</select>'+
+      '<div class="form-row"><div><label>Total de questões</label><input type="number" name="total" min="1" required /></div>'+
+      '<div><label>Acertos</label><input type="number" name="correct" min="0" required /></div></div>'+
+      '<button class="btn btn-accent btn-block" type="submit">Salvar</button>'+
+    '</form>';
+
+  return screenHeader('Questões & Desempenho', {back:'back-to-more'}) + '<div class="screen-body">'+
+    '<div class="card"><div class="section-title">Registrar questões</div>'+formBlock+'</div>'+
+    (summary?'<div class="section-title">Desempenho por disciplina</div>'+summary:'')+
+    (recent?'<div class="section-title">Últimos registros</div><div class="card">'+recent+'</div>':'')+
+  '</div>';
+}
+
+function renderDashboard(){
+  var todaySec = secondsToday(), weekSec = secondsThisWeek(), streak = currentStreak();
+  var from = addDaysStr(todayStr(), -29);
+  var bySubject = {};
+  sessionsInRange(from, todayStr()).forEach(function(s){ bySubject[s.subjectId] = (bySubject[s.subjectId]||0) + s.seconds; });
+  var vals = Object.keys(bySubject).map(function(k){ return bySubject[k]; });
+  var maxSec = vals.length ? Math.max.apply(null, vals) : 1;
+  var distHtml;
+  if (Object.keys(bySubject).length){
+    distHtml = state.subjects.filter(function(s){ return bySubject[s.id]; })
+      .sort(function(a,b){ return bySubject[b.id]-bySubject[a.id]; })
+      .map(function(s){
+        return '<div class="dist-row"><div class="dist-label">'+subjectColorDot(s)+esc(s.name)+'</div>'+
+          '<div class="pbar"><div class="pbar-fill" style="width:'+(bySubject[s.id]/maxSec*100)+'%; background:'+s.color+'"></div></div>'+
+          '<div class="dist-val">'+fmtDur(bySubject[s.id])+'</div></div>';
+      }).join('');
+  } else { distHtml = emptyState('Sem estudos nos últimos 30 dias',''); }
+
+  var days = []; for (var i=0;i<7;i++) days.push(addDaysStr(todayStr(), -6+i));
+  var daySecs = days.map(function(d){ return secondsInRange(d,d); });
+  var maxDay = Math.max.apply(null, daySecs.concat([1]));
+  var evoHtml = '<div class="evo-chart">' + days.map(function(d,i){
+    var h = Math.max(4, daySecs[i]/maxDay*80);
+    var wd = new Date(d+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'narrow'});
+    return '<div class="evo-col"><div class="evo-bar" style="height:'+h+'px"></div><div class="evo-label">'+wd+'</div></div>';
+  }).join('') + '</div>';
+
+  return screenHeader('Dashboard', {back:'back-to-more'}) + '<div class="screen-body">'+
+    '<div class="stat-grid">'+
+      '<div class="stat-box"><div class="stat-value">'+fmtDur(todaySec)+'</div><div class="stat-label">Hoje</div></div>'+
+      '<div class="stat-box"><div class="stat-value">'+fmtDur(weekSec)+'</div><div class="stat-label">Semana</div></div>'+
+      '<div class="stat-box"><div class="stat-value">'+streak+'d</div><div class="stat-label">Sequência</div></div>'+
+    '</div>'+
+    '<div class="section-title">Distribuição por disciplina (30 dias)</div><div class="card">'+distHtml+'</div>'+
+    '<div class="section-title">Últimos 7 dias</div><div class="card">'+evoHtml+'</div>'+
+  '</div>';
+}
+
+function renderCalendario(){
+  var base = state.ui.calMonth ? new Date(state.ui.calMonth+'-01T00:00:00') : new Date();
+  var year = base.getFullYear(), month = base.getMonth();
+  var firstDay = new Date(year, month, 1);
+  var startWeekday = firstDay.getDay();
+  var daysInMonth = new Date(year, month+1, 0).getDate();
+  var monthLabel = firstDay.toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
+  var sessionDays = new Set(state.sessions.map(function(s){ return s.date; }));
+  var reviewDays = new Set(state.reviews.map(function(r){ return r.dueDate; }));
+
+  var cells = '';
+  for (var i=0;i<startWeekday;i++) cells += '<div class="cal-cell empty"></div>';
+  for (var d=1; d<=daysInMonth; d++){
+    var dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var hasSession = sessionDays.has(dateStr), hasReview = reviewDays.has(dateStr);
+    var isToday = dateStr===todayStr(), isSelected = state.ui.selectedCalDay===dateStr;
+    cells += '<div class="cal-cell '+(isToday?'today':'')+' '+(isSelected?'selected':'')+'" data-action="select-cal-day" data-date="'+dateStr+'">'+
+      '<span class="cal-day-num">'+d+'</span><span class="cal-dots">'+(hasSession?'<i class="cal-dot session"></i>':'')+(hasReview?'<i class="cal-dot review"></i>':'')+'</span></div>';
+  }
+
+  var detail = '';
+  if (state.ui.selectedCalDay){
+    var dsel = state.ui.selectedCalDay;
+    var daySessions = state.sessions.filter(function(s){ return s.date===dsel; });
+    var dayReviews = state.reviews.filter(function(r){ return r.dueDate===dsel; });
+    detail = '<div class="card"><div class="section-title">'+fmtDateBR(dsel)+'</div>'+
+      (daySessions.length ? daySessions.map(function(s){ var sub=subjectById(s.subjectId); return '<div class="q-row"><span>'+esc(sub?sub.name:'?')+' · '+esc(s.type)+'</span><span>'+fmtDur(s.seconds)+'</span></div>'; }).join('') : '<div class="empty-msg-sm">Sem estudos.</div>')+
+      (dayReviews.length ? dayReviews.map(function(r){ var sub=subjectById(r.subjectId); return '<div class="q-row"><span>Revisão · '+esc(sub?sub.name:'?')+'</span><span>'+(r.done?'feita':'pendente')+'</span></div>'; }).join('') : '')+
+    '</div>';
+  }
+
+  return screenHeader('Calendário', {back:'back-to-more'}) + '<div class="screen-body">'+
+    '<div class="cal-nav"><button class="icon-btn" data-action="cal-prev-month">‹</button><div class="cal-month-label">'+esc(monthLabel)+'</div><button class="icon-btn" data-action="cal-next-month">›</button></div>'+
+    '<div class="cal-weekdays">'+['D','S','T','Q','Q','S','S'].map(function(w){ return '<div>'+w+'</div>'; }).join('')+'</div>'+
+    '<div class="cal-grid">'+cells+'</div>'+detail+
+  '</div>';
+}
+
+function goalBlock(label, goalMin, actualSec, key){
+  var goalSec = goalMin*60;
+  var pct = goalSec>0 ? actualSec/goalSec*100 : 0;
+  return '<div class="card"><div class="section-title">'+label+'</div>'+progressBar(pct, pct>=100?'good':'accent')+
+    '<div class="goal-val">'+fmtDur(actualSec)+' de '+fmtDur(goalSec)+'</div>'+
+    '<form data-action="update-goal" data-key="'+key+'" class="inline-form">'+
+      '<input type="number" name="hours" min="0" step="0.5" value="'+(goalMin/60).toFixed(1)+'" />'+
+      '<span class="unit-label">horas</span><button class="btn btn-sm btn-outline" type="submit">Salvar</button>'+
+    '</form></div>';
+}
+function renderMetas(){
+  var g = state.goals;
+  return screenHeader('Metas', {back:'back-to-more'}) + '<div class="screen-body">'+
+    goalBlock('Meta diária', g.daily, secondsToday(), 'daily')+
+    goalBlock('Meta semanal', g.weekly, secondsThisWeek(), 'weekly')+
+    goalBlock('Meta mensal', g.monthly, secondsThisMonth(), 'monthly')+
+  '</div>';
+}
+
+function renderEstatisticas(){
+  var streak = currentStreak();
+  var daysWithSession = Array.from(new Set(state.sessions.map(function(s){ return s.date; }))).sort();
+  var best=0, run=0, prevDate=null;
+  daysWithSession.forEach(function(d){
+    if (prevDate && daysDiffStr(prevDate,d)===1) run++; else run=1;
+    if (run>best) best=run;
+    prevDate=d;
+  });
+  var totalSec = state.sessions.reduce(function(s,x){ return s+x.seconds; },0);
+  var avgDaily = secondsInRange(addDaysStr(todayStr(),-29), todayStr())/30;
+
+  var byType = {};
+  state.sessions.forEach(function(s){ byType[s.type]=(byType[s.type]||0)+s.seconds; });
+  var typeTotal = Object.keys(byType).reduce(function(a,k){ return a+byType[k]; },0) || 1;
+  var typeHtml = Object.keys(byType).length ? Object.keys(byType).sort(function(a,b){ return byType[b]-byType[a]; }).map(function(t){
+    return '<div class="dist-row"><div class="dist-label">'+esc(t)+'</div>'+progressBar(byType[t]/typeTotal*100,'accent')+'<div class="dist-val">'+fmtPct(byType[t]/typeTotal)+'</div></div>';
+  }).join('') : emptyState('Sem dados ainda','');
+
+  var bySubjTime = {};
+  state.sessions.forEach(function(s){ bySubjTime[s.subjectId]=(bySubjTime[s.subjectId]||0)+s.seconds; });
+  var topIds = Object.keys(bySubjTime).sort(function(a,b){ return bySubjTime[b]-bySubjTime[a]; });
+  var topSubject = topIds.length ? subjectById(topIds[0]) : null;
+
+  var accEntries = state.subjects.map(function(s){ return {s:s, acc:accuracyForSubject(s.id)}; }).filter(function(x){ return x.acc!==null; }).sort(function(a,b){ return a.acc-b.acc; });
+  var weakest = accEntries.length ? accEntries[0] : null;
+
+  return screenHeader('Estatísticas', {back:'back-to-more'}) + '<div class="screen-body">'+
+    '<div class="stat-grid">'+
+      '<div class="stat-box"><div class="stat-value">'+streak+'d</div><div class="stat-label">Sequência atual</div></div>'+
+      '<div class="stat-box"><div class="stat-value">'+best+'d</div><div class="stat-label">Melhor sequência</div></div>'+
+      '<div class="stat-box"><div class="stat-value">'+fmtDur(totalSec)+'</div><div class="stat-label">Total estudado</div></div>'+
+    '</div>'+
+    '<div class="card"><div class="q-row"><span>Média diária (30d)</span><span>'+fmtDur(avgDaily)+'</span></div>'+
+    (topSubject?'<div class="q-row"><span>Disciplina mais estudada</span><span>'+esc(topSubject.name)+'</span></div>':'')+
+    (weakest?'<div class="q-row"><span>Maior oportunidade de melhoria</span><span>'+esc(weakest.s.name)+' ('+fmtPct(weakest.acc)+')</span></div>':'')+
+    '</div>'+
+    '<div class="section-title">Tempo por tipo de estudo</div><div class="card">'+typeHtml+'</div>'+
+  '</div>';
+}
+
+function renderSyncSection(){
+  if (!firebaseConfigured){
+    return '<div class="card"><div class="section-title">Sincronização</div>'+
+      '<p class="muted-text">Ainda não configurada. Cole as credenciais do Firebase no topo do arquivo (FIREBASE_CONFIG) pra ativar login e sincronização entre aparelhos. Enquanto isso, dentro do Claude seus dados já acompanham sua conta entre sessões.</p></div>';
+  }
+  if (state.ui.syncConflict){
+    return '<div class="card"><div class="section-title">Encontrei dados na nuvem</div>'+
+      '<p class="muted-text">Este aparelho já tem dados locais e sua conta também tem dados salvos na nuvem. Qual versão você quer manter?</p>'+
+      '<button class="btn btn-accent btn-block" data-action="sync-use-cloud">Usar dados da nuvem</button>'+
+      '<button class="btn btn-outline btn-block" data-action="sync-use-local">Usar dados deste aparelho</button></div>';
+  }
+  if (!currentUser){
+    return '<div class="card"><div class="section-title">Sincronização</div>'+
+      '<p class="muted-text">Entre com sua conta Google pra sincronizar seus dados entre celular e computador em tempo real.</p>'+
+      '<button class="btn btn-accent btn-block" data-action="sync-sign-in">'+(syncBusy?'Entrando…':'Entrar com Google')+'</button>'+
+      (syncErrorMsg?'<p class="muted-text" style="color:var(--warn)">'+esc(syncErrorMsg)+'</p>':'')+
+      '</div>';
+  }
+  var statusLine = lastSyncAt ? ('Sincronizado às '+new Date(lastSyncAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})) : 'Aguardando primeira sincronização…';
+  return '<div class="card"><div class="section-title">Sincronização</div>'+
+    '<p class="muted-text">Conectado como '+esc(currentUser.email||currentUser.displayName||'')+'</p>'+
+    '<p class="muted-text" id="syncStatusLine">'+statusLine+'</p>'+
+    (syncErrorMsg?'<p class="muted-text" style="color:var(--warn)">'+esc(syncErrorMsg)+'</p>':'')+
+    '<button class="btn btn-outline btn-block" data-action="sync-sign-out">Sair da conta</button></div>';
+}
+
+function renderConfig(){
+  var notifSupported = ('Notification' in window);
+  var notifStatus = notifSupported ? Notification.permission : 'unsupported';
+  return screenHeader('Configurações', {back:'back-to-more'}) + '<div class="screen-body">'+
+    '<div class="card"><div class="section-title">Notificações</div>'+
+    '<p class="muted-text">Avisa sobre revisões atrasadas quando você abre o app.</p>'+
+    (!notifSupported ? '<div class="empty-msg-sm">Não suportado neste navegador.</div>' :
+      notifStatus==='granted' ? chip('Ativadas','good') :
+      '<button class="btn btn-outline btn-block" data-action="request-notifications">Ativar notificações</button>')+
+    '</div>'+
+    '<div class="card"><div class="section-title">Backup</div>'+
+      '<button class="btn btn-outline btn-block" data-action="export-backup">Exportar dados (JSON)</button>'+
+      '<label class="btn btn-outline btn-block" style="text-align:center; cursor:pointer; display:block;">Importar backup'+
+        '<input type="file" id="importFile" accept="application/json" style="display:none" /></label>'+
+    '</div>'+
+    '<div class="card"><div class="section-title">Sobre o algoritmo de prioridade</div>'+
+    '<p class="muted-text">Prioridade = peso × dificuldade × déficit de desempenho × tempo desde a última atividade. Disciplinas com maior peso na prova, mais difíceis, com menor % de acerto e há mais tempo sem revisão sobem no ranking automaticamente.</p></div>'+
+    renderSyncSection()+
+    '<div class="card"><div class="section-title">Zona de risco</div>'+
+    '<button class="btn '+(state.ui.confirmReset?'btn-danger armed':'btn-outline')+' btn-block" data-action="reset-data">'+(state.ui.confirmReset?'Confirmar: apagar tudo':'Zerar todos os dados')+'</button></div>'+
+  '</div>';
+}
+
+function renderMais(){
+  if (state.ui.subScreen){
+    switch(state.ui.subScreen){
+      case 'registro': return renderRegistro();
+      case 'questoes': return renderQuestoes();
+      case 'dashboard': return renderDashboard();
+      case 'calendario': return renderCalendario();
+      case 'metas': return renderMetas();
+      case 'estatisticas': return renderEstatisticas();
+      case 'config': return renderConfig();
+    }
+  }
+  var items = [
+    {key:'registro', label:'Registro manual'},
+    {key:'questoes', label:'Questões & Desempenho'},
+    {key:'dashboard', label:'Dashboard'},
+    {key:'calendario', label:'Calendário'},
+    {key:'metas', label:'Metas'},
+    {key:'estatisticas', label:'Estatísticas'},
+    {key:'config', label:'Configurações & Backup'}
+  ];
+  return screenHeader('Mais') + '<div class="screen-body"><div class="menu-grid">'+
+    items.map(function(i){ return '<button class="menu-item" data-action="open-sub" data-sub="'+i.key+'"><span>'+i.label+'</span><span class="chev">›</span></button>'; }).join('')+
+  '</div></div>';
+}
+
+function screenContent(){
+  switch(state.ui.tab){
+    case 'hoje': return renderHoje();
+    case 'disciplinas': return renderDisciplinas();
+    case 'cronometro': return renderCronometro();
+    case 'revisoes': return renderRevisoes();
+    case 'mais': return renderMais();
+    default: return renderHoje();
+  }
+}
+
+var appEl = document.getElementById('app');
+
+function populateTopicSelect(subjSelId, topicSelId){
+  var subjSel = document.getElementById(subjSelId);
+  var topicSel = document.getElementById(topicSelId);
+  if (!subjSel || !topicSel) return;
+  var subjectId = subjSel.value;
+  var topics = topicsForSubject(subjectId);
+  var current = topicSel.value;
+  topicSel.innerHTML = '<option value="">—</option>' + topics.map(function(t){ return '<option value="'+t.id+'">'+esc(t.name)+'</option>'; }).join('');
+  if (topics.some(function(t){ return t.id===current; })) topicSel.value = current;
+}
+
+function timerElapsedMs(t){
+  if (!t) return 0;
+  var end = t.pausedAt || Date.now();
+  return end - t.startedAt - t.totalPausedMs;
+}
+function updateTimerDisplay(){
+  var el = document.getElementById('timerDisplay');
+  if (!el || !state.activeTimer) return;
+  el.textContent = fmtHMS(timerElapsedMs(state.activeTimer)/1000);
+}
+
+function render(){
+  try{
+    appEl.innerHTML = '<div class="app-inner">'+screenContent()+'</div>'+renderTabBar();
+    populateTopicSelect('timerSubject','timerTopic');
+    populateTopicSelect('manualSubject','manualTopic');
+    if (state.activeTimer) updateTimerDisplay();
+  } catch(err){
+    appEl.innerHTML = '<div class="crash"><h2>Ops, algo quebrou</h2><pre>'+esc(err && err.message)+'</pre></div>';
+    console.error(err);
+  }
+}
+
+function exportBackup(){
+  var blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'ciclo-mais-backup-'+todayStr()+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+}
+
+function handleImportFile(file){
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    try{
+      var data = JSON.parse(reader.result);
+      if (!data || !Array.isArray(data.subjects)) throw new Error('formato inválido');
+      var d = defaultState();
+      state = Object.assign(d, data, { ui: d.ui });
+      persist(); render();
+    } catch(e){
+      console.error(e);
+      try{ alert('Não foi possível importar: arquivo inválido.'); }catch(_e){}
+    }
+  };
+  reader.readAsText(file);
+}
+
+function shiftCalMonth(delta){
+  var base = state.ui.calMonth ? new Date(state.ui.calMonth+'-01T00:00:00') : new Date();
+  base.setMonth(base.getMonth()+delta);
+  state.ui.calMonth = base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0');
+}
+
+appEl.addEventListener('click', function(e){
+  var btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  try{
+    var action = btn.dataset.action;
+    switch(action){
+      case 'goto-tab':
+        state.ui.tab = btn.dataset.tab;
+        if (btn.dataset.tab==='mais') state.ui.subScreen=null;
+        state.ui.confirmDeleteSubject=null; state.ui.confirmReset=false;
+        state.ui.editingSubject=null; state.ui.preselectSubject=null;
+        render();
+        break;
+      case 'open-sub':
+        state.ui.subScreen = btn.dataset.sub; state.ui.confirmReset=false;
+        render();
+        break;
+      case 'back-to-more':
+        state.ui.subScreen=null; state.ui.confirmReset=false;
+        render();
+        break;
+      case 'toggle-subject':
+        state.ui.expandedSubject = state.ui.expandedSubject===btn.dataset.id ? null : btn.dataset.id;
+        state.ui.confirmDeleteSubject=null;
+        render();
+        break;
+      case 'edit-subject':
+        state.ui.editingSubject = btn.dataset.id;
+        render();
+        break;
+      case 'cancel-edit-subject':
+        state.ui.editingSubject = null;
+        render();
+        break;
+      case 'delete-subject': {
+        var idDel = btn.dataset.id;
+        if (state.ui.confirmDeleteSubject !== idDel){ state.ui.confirmDeleteSubject = idDel; render(); break; }
+        state.subjects = state.subjects.filter(function(s){ return s.id!==idDel; });
+        state.topics = state.topics.filter(function(t){ return t.subjectId!==idDel; });
+        state.sessions = state.sessions.filter(function(s){ return s.subjectId!==idDel; });
+        state.questionLogs = state.questionLogs.filter(function(q){ return q.subjectId!==idDel; });
+        state.reviews = state.reviews.filter(function(r){ return r.subjectId!==idDel; });
+        state.ui.confirmDeleteSubject=null; state.ui.expandedSubject=null;
+        persist(); render();
+        break;
+      }
+      case 'delete-topic':
+        state.topics = state.topics.filter(function(t){ return t.id!==btn.dataset.id; });
+        persist(); render();
+        break;
+      case 'start-from-priority':
+        state.ui.tab='cronometro'; state.ui.preselectSubject = btn.dataset.subject;
+        render();
+        break;
+      case 'start-timer': {
+        var subjSel = document.getElementById('timerSubject');
+        if (!subjSel || !subjSel.value) break;
+        var topicSel = document.getElementById('timerTopic');
+        var typeSel = document.getElementById('timerType');
+        state.activeTimer = { subjectId: subjSel.value, topicId: topicSel.value||null, type: typeSel.value, startedAt: Date.now(), pausedAt: null, totalPausedMs: 0 };
+        persist(); render();
+        break;
+      }
+      case 'pause-timer':
+        if (state.activeTimer) state.activeTimer.pausedAt = Date.now();
+        persist(); render();
+        break;
+      case 'resume-timer':
+        if (state.activeTimer && state.activeTimer.pausedAt){
+          state.activeTimer.totalPausedMs += Date.now()-state.activeTimer.pausedAt;
+          state.activeTimer.pausedAt = null;
+        }
+        persist(); render();
+        break;
+      case 'stop-timer': {
+        if (state.activeTimer){
+          var seconds = Math.round(timerElapsedMs(state.activeTimer)/1000);
+          var t = state.activeTimer;
+          if (seconds>0){
+            state.sessions.push({ id:uid(), subjectId:t.subjectId, topicId:t.topicId, type:t.type, seconds:seconds, date:todayStr(), source:'timer', ts:Date.now() });
+            scheduleReviewIfNeeded(t.subjectId, t.topicId);
+          }
+          state.activeTimer = null;
+        }
+        persist(); render();
+        break;
+      }
+      case 'complete-review':
+        completeReview(btn.dataset.id, 15*60);
+        persist(); render();
+        break;
+      case 'export-backup':
+        exportBackup();
+        break;
+      case 'request-notifications':
+        if ('Notification' in window){
+          Notification.requestPermission().then(function(){ render(); }).catch(function(){});
+        }
+        break;
+      case 'sync-sign-in':
+        signInWithGoogle();
+        break;
+      case 'sync-sign-out':
+        signOutUser();
+        break;
+      case 'sync-use-cloud':
+        if (state.ui.syncConflict){
+          applyCloudPayload(state.ui.syncConflict.payload);
+          state.ui.syncConflict = null;
+          if (currentUser){ smallSet(SYNCED_MARKER_KEY, currentUser.uid); startRealtimeListener(currentUser.uid); lastSyncAt = Date.now(); }
+        }
+        render();
+        break;
+      case 'sync-use-local':
+        if (state.ui.syncConflict){
+          state.ui.syncConflict = null;
+          if (currentUser){ smallSet(SYNCED_MARKER_KEY, currentUser.uid); startRealtimeListener(currentUser.uid); pushToCloud(); }
+        }
+        render();
+        break;
+      case 'reset-data':
+        if (!state.ui.confirmReset){ state.ui.confirmReset = true; render(); break; }
+        state = defaultState();
+        persist(); render();
+        break;
+      case 'cal-prev-month': shiftCalMonth(-1); render(); break;
+      case 'cal-next-month': shiftCalMonth(1); render(); break;
+      case 'select-cal-day':
+        state.ui.selectedCalDay = state.ui.selectedCalDay===btn.dataset.date ? null : btn.dataset.date;
+        render();
+        break;
+    }
+  } catch(err){ console.error(err); }
+});
+
+appEl.addEventListener('change', function(e){
+  if (e.target.id==='timerSubject') populateTopicSelect('timerSubject','timerTopic');
+  if (e.target.id==='manualSubject') populateTopicSelect('manualSubject','manualTopic');
+  if (e.target.id==='importFile') handleImportFile(e.target.files[0]);
+});
+
+appEl.addEventListener('submit', function(e){
+  var form = e.target.closest('[data-action]');
+  if (!form) return;
+  e.preventDefault();
+  try{
+    var action = form.dataset.action;
+    var fd = new FormData(form);
+    switch(action){
+      case 'add-subject': {
+        var editId = fd.get('editId');
+        var name = (fd.get('name')||'').trim();
+        if (!name) break;
+        var weight = Number(fd.get('weight'))||3;
+        var difficulty = Number(fd.get('difficulty'))||3;
+        var color = fd.get('color') || SUBJECT_COLORS[0];
+        if (editId){
+          var s = subjectById(editId);
+          if (s){ s.name=name; s.weight=weight; s.difficulty=difficulty; s.color=color; }
+          state.ui.editingSubject = null;
+        } else {
+          state.subjects.push({ id: uid(), name: name, weight: weight, difficulty: difficulty, color: color });
+        }
+        persist(); render();
+        break;
+      }
+      case 'add-topic': {
+        var subjectId = form.dataset.subject;
+        var tname = (fd.get('topicName')||'').trim();
+        if (!tname) break;
+        state.topics.push({ id: uid(), subjectId: subjectId, name: tname });
+        persist(); render();
+        break;
+      }
+      case 'add-questions': {
+        var qSubjectId = fd.get('subjectId');
+        var total = Number(fd.get('total'));
+        var correct = Math.min(Number(fd.get('correct')), total);
+        if (!qSubjectId || !total || total<1) break;
+        state.questionLogs.push({ id: uid(), subjectId: qSubjectId, topicId:null, total: total, correct: Math.max(0,correct), date: todayStr(), ts: Date.now() });
+        persist(); render();
+        break;
+      }
+      case 'add-manual-session': {
+        var mSubjectId = fd.get('subjectId');
+        var mTopicId = fd.get('topicId') || null;
+        var mType = fd.get('type');
+        var mDate = fd.get('date') || todayStr();
+        var minutes = Number(fd.get('minutes'));
+        if (!mSubjectId || !minutes || minutes<1) break;
+        state.sessions.push({ id: uid(), subjectId: mSubjectId, topicId: mTopicId, type: mType, seconds: minutes*60, date: mDate, source:'manual', ts: Date.now() });
+        if (mType !== 'Revisão') scheduleReviewIfNeeded(mSubjectId, mTopicId);
+        persist(); render();
+        break;
+      }
+      case 'update-goal': {
+        var key = form.dataset.key;
+        var hours = Number(fd.get('hours'))||0;
+        state.goals[key] = Math.round(hours*60);
+        persist(); render();
+        break;
+      }
+    }
+  } catch(err){ console.error(err); }
+});
+
+setInterval(function(){ if (state.activeTimer && !state.activeTimer.pausedAt) updateTimerDisplay(); }, 1000);
+
+function init(){
+  storageLoad().then(function(loaded){
+    if (loaded){
+      var d = defaultState();
+      state = Object.assign(d, loaded, { ui: Object.assign(d.ui, loaded.ui||{}) });
+    }
+    render();
+    try{
+      if ('Notification' in window && Notification.permission==='granted'){
+        var n = overdueReviews().length + todayReviews().length;
+        if (n>0) new Notification('Ciclo+', { body: 'Você tem '+n+' revisão(ões) pendente(s) hoje.' });
+      }
+    }catch(e){}
+
+    if (firebaseConfigured && auth){
+      auth.onAuthStateChanged(function(user){
+        syncBusy = false;
+        if (user){ handleSignedIn(user); }
+        else { currentUser = null; stopRealtimeListener(); render(); }
+      });
+    }
+  });
+  if ('serviceWorker' in navigator){
+    try{ navigator.serviceWorker.register('./sw.js').catch(function(){}); }catch(e){}
+  }
+}
+
+init();
+})();
+</script>
+</body>
+</html>

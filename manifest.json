@@ -1,0 +1,16 @@
+{
+  "name": "Ciclo+ Estudos",
+  "short_name": "Ciclo+",
+  "description": "Gestão de estudos com ciclo inteligente baseado em peso, dificuldade, desempenho e tempo desde a última revisão.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F1220",
+  "theme_color": "#0F1220",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
