@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
-<title>Ciclo+ Estudos</title>
+<title>Aprova</title>
 <meta name="theme-color" content="#0F1220" />
 <link rel="manifest" href="./manifest.json" />
-<link rel="icon" href="./icons/icon-192.png" />
-<link rel="apple-touch-icon" href="./icons/icon-192.png" />
+<link rel="icon" href="./icon-192.png" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
 <style>
 :root{
   --bg:#0F1220; --surface:#171B2E; --surface2:#1F2440; --surface3:#262C4A;
@@ -195,12 +195,12 @@ input:focus, select:focus, button:focus-visible{ outline:2px solid var(--accent)
 // projeto > Geral > "Seus apps" > app Web). Enquanto ficar com o valor
 // padrão abaixo, o app funciona normalmente só com armazenamento local.
 var FIREBASE_CONFIG = {
-  apiKey: "COLOQUE_AQUI",
-  authDomain: "COLOQUE_AQUI",
-  projectId: "COLOQUE_AQUI",
-  storageBucket: "COLOQUE_AQUI",
-  messagingSenderId: "COLOQUE_AQUI",
-  appId: "COLOQUE_AQUI"
+  apiKey: "AIzaSyB6Yh8dnAgsPJBJ7W7421qqs6tWOXOV4Bc",
+  authDomain: "aprova-1e82f.firebaseapp.com",
+  projectId: "aprova-1e82f",
+  storageBucket: "aprova-1e82f.firebasestorage.app",
+  messagingSenderId: "147112096652",
+  appId: "1:147112096652:web:f07a3ae08a6287620fdca9"
 };
 var SYNCED_MARKER_KEY = 'ciclo_mais_synced_uid_v1';
 
@@ -591,7 +591,7 @@ function renderHoje(){
 
   var dateLabel = new Date().toLocaleDateString('pt-BR',{weekday:'long', day:'numeric', month:'long'});
 
-  return screenHeader('Ciclo+') +
+  return screenHeader('Aprova') +
     '<div class="screen-body">'+
       '<div class="hero-card"><div class="hero-date">'+esc(dateLabel)+'</div><div class="hero-goal-label">Meta de hoje</div>'+
       progressBar(pct, pct>=100?'good':'accent')+
@@ -1265,7 +1265,7 @@ function init(){
     try{
       if ('Notification' in window && Notification.permission==='granted'){
         var n = overdueReviews().length + todayReviews().length;
-        if (n>0) new Notification('Ciclo+', { body: 'Você tem '+n+' revisão(ões) pendente(s) hoje.' });
+        if (n>0) new Notification('Aprova', { body: 'Você tem '+n+' revisão(ões) pendente(s) hoje.' });
       }
     }catch(e){}
 

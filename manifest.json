@@ -1,6 +1,6 @@
 {
-  "name": "Ciclo+ Estudos",
-  "short_name": "Ciclo+",
+  "name": "Aprova",
+  "short_name": "Aprova",
   "description": "Gestão de estudos com ciclo inteligente baseado em peso, dificuldade, desempenho e tempo desde a última revisão.",
   "start_url": "./index.html",
   "scope": "./",
@@ -10,7 +10,7 @@
   "theme_color": "#0F1220",
   "lang": "pt-BR",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }
