@@ -154,6 +154,37 @@ input:focus, select:focus, button:focus-visible{ outline:2px solid var(--accent)
 .evo-bar{ width:14px; background:var(--accent); border-radius:4px; }
 .evo-label{ font-size:10px; color:var(--ink-faint); text-transform:uppercase; }
 
+
+.plan-week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
+.plan-week-label{font-weight:700;text-transform:capitalize;text-align:center;flex:1}
+.plan-week-grid{display:flex;flex-direction:column;gap:8px}
+.plan-day{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.plan-day.today{border-color:var(--accent)}
+.plan-day-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2)}
+.plan-day-title{font-weight:700;font-size:14px;text-transform:capitalize}
+.plan-day-meta{font-size:11.5px;color:var(--ink-dim)}
+.plan-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-top:1px solid var(--border)}
+.plan-item.done{opacity:.65}
+.plan-item-main{flex:1;min-width:0}
+.plan-item-top{display:flex;gap:7px;align-items:center}
+.plan-item-name{font-size:13.5px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-item-topic{font-size:11.5px;color:var(--ink-dim);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-item-meta{font-size:11px;color:var(--ink-faint);margin-top:4px}
+.plan-status{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--ink-faint)}
+.plan-status.pending{background:var(--accent)}
+.plan-status.done{background:var(--good)}
+.plan-status.overdue{background:var(--warn)}
+.plan-actions{display:flex;gap:6px;flex-shrink:0}
+.plan-actions .btn{padding:6px 9px;font-size:11px}
+.week-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.week-kpi .stat-box{padding:11px 6px}
+.plan-empty{padding:12px 14px;color:var(--ink-faint);font-size:12px}
+.plan-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan-form-grid .full{grid-column:1/-1}
+.plan-template-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.plan-compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}.plan-compare-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px}.plan-compare-card .kpi{font-size:18px;font-weight:750}.plan-compare-card .lbl{font-size:11px;color:var(--ink-dim);margin-top:3px}.plan-compare-table{display:flex;flex-direction:column;gap:8px;margin-top:12px}.plan-compare-row{display:grid;grid-template-columns:minmax(110px,1.2fr) minmax(70px,.7fr) minmax(70px,.7fr) minmax(70px,.7fr);gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--border)}.plan-compare-row.head{font-size:11px;color:var(--ink-dim);border-top:0;padding-top:0}.plan-compare-progress{height:7px;background:var(--border);border-radius:999px;overflow:hidden;margin-top:5px}.plan-compare-progress>div{height:100%;background:var(--accent);border-radius:999px}.plan-compare-note{font-size:11px;color:var(--ink-dim);line-height:1.45;margin-top:8px}.plan-compare-badge{display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:700;background:var(--surface2);border:1px solid var(--border)}.plan-compare-badge.good{color:var(--good)}.plan-compare-badge.warn{color:var(--warn)}.plan-compare-badge.muted{color:var(--ink-dim)}@media(max-width:700px){.plan-compare-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.plan-compare-row{grid-template-columns:minmax(90px,1.2fr) .7fr .7fr .7fr;font-size:12px}}
+.btn-xs{padding:6px 10px;font-size:11px}
+
 .cal-nav{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
 .cal-month-label{ font-weight:600; text-transform:capitalize; }
 .cal-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; color:var(--ink-faint); margin-bottom:4px; }
@@ -256,12 +287,12 @@ function storageSave(data){
 
 function defaultState(){
   return {
-    subjects: [], topics: [], sessions: [], questionLogs: [], reviews: [],
+    subjects: [], topics: [], sessions: [], questionLogs: [], reviews: [], plans: [],
     goals: { daily: 120, weekly: 600, monthly: 2400 },
     activeTimer: null,
     ui: { tab:'hoje', subScreen:null, calMonth:null, expandedSubject:null, selectedCalDay:null,
           editingSubject:null, confirmDeleteSubject:null, confirmReset:false, preselectSubject:null,
-          syncConflict:null }
+          syncConflict:null, planWeekStart:null, editingPlan:null, preselectTopic:null, preselectType:null, activePlanId:null }
   };
 }
 
@@ -384,6 +415,110 @@ function upcomingReviews(days){
     .sort(function(a,b){ return a.dueDate < b.dueDate ? -1 : 1; });
 }
 
+
+function startOfWeekStr(dateStr){
+  var d = dateStr ? new Date(dateStr+'T00:00:00') : new Date();
+  var day = d.getDay();
+  d.setDate(d.getDate() - day);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function planDateRange(startStr){
+  var out=[];
+  for(var i=0;i<7;i++) out.push(addDaysStr(startStr,i));
+  return out;
+}
+function plansForDate(dateStr){
+  return state.plans.filter(function(p){ return p.date===dateStr; }).sort(function(a,b){ return (a.order||0)-(b.order||0); });
+}
+function planStatus(plan){
+  if(plan.status==='done') return 'done';
+  if(plan.date < todayStr()) return 'overdue';
+  return 'pending';
+}
+function plannedSecondsInRange(start,end){
+  return state.plans.filter(function(p){ return p.date>=start && p.date<end && p.status!=='cancelled'; })
+    .reduce(function(sum,p){ return sum+(Number(p.plannedMinutes)||0)*60; },0);
+}
+function completedPlannedSecondsInRange(start,end){
+  return state.plans.filter(function(p){ return p.date>=start && p.date<end && p.status==='done'; })
+    .reduce(function(sum,p){ return sum+(Number(p.plannedMinutes)||0)*60; },0);
+}
+function planExecutionFor(plan){
+  var linked = state.sessions.filter(function(s){ return s.planId===plan.id; });
+  return linked.reduce(function(sum,s){ return sum+s.seconds; },0);
+}
+
+function plannedSecondsInRangeAll(start,end){
+  return state.plans.filter(function(p){ return p.date>=start && p.date<end && p.status!=='cancelled'; })
+    .reduce(function(sum,p){ return sum+(Number(p.plannedMinutes)||0)*60; },0);
+}
+function executedSecondsInRange(start,end){
+  return state.sessions.filter(function(s){ return s.date>=start && s.date<end; })
+    .reduce(function(sum,s){ return sum+(Number(s.seconds)||0); },0);
+}
+function linkedExecutedSecondsInRange(start,end){
+  return state.sessions.filter(function(s){ return s.date>=start && s.date<end && s.planId; })
+    .reduce(function(sum,s){ return sum+(Number(s.seconds)||0); },0);
+}
+function unplannedExecutedSecondsInRange(start,end){
+  return Math.max(0, executedSecondsInRange(start,end)-linkedExecutedSecondsInRange(start,end));
+}
+function planCompareForRange(start,end){
+  var plans=state.plans.filter(function(p){return p.date>=start&&p.date<end&&p.status!=='cancelled';});
+  var planned=plans.reduce(function(a,p){return a+(Number(p.plannedMinutes)||0)*60;},0);
+  var actual=linkedExecutedSecondsInRange(start,end);
+  var completed=plans.filter(function(p){return planExecutionFor(p)>0;}).length;
+  var total=plans.length;
+  var overdue=plans.filter(function(p){return planExecutionFor(p)<=0 && p.date<todayStr();}).length;
+  var adherence=planned>0 ? Math.min(100,actual/planned*100) : 0;
+  return {planned:planned,actual:actual,unplanned:unplannedExecutedSecondsInRange(start,end),adherence:adherence,completed:completed,total:total,overdue:overdue};
+}
+function planComparisonHtml(start,end){
+  var c=planCompareForRange(start,end);
+  var plans=state.plans.filter(function(p){return p.date>=start&&p.date<end&&p.status!=='cancelled';});
+  var byDate={};
+  plans.forEach(function(p){
+    if(!byDate[p.date]) byDate[p.date]={planned:0,actual:0,count:0,done:0};
+    byDate[p.date].planned += (Number(p.plannedMinutes)||0)*60;
+    byDate[p.date].actual += planExecutionFor(p);
+    byDate[p.date].count++;
+    if(planExecutionFor(p)>0) byDate[p.date].done++;
+  });
+  var rows='';
+  var days=planDateRange(start);
+  days.forEach(function(d){
+    var x=byDate[d]||{planned:0,actual:0,count:0,done:0};
+    if(!x.planned && !x.actual) return;
+    var pct=x.planned>0?Math.min(100,x.actual/x.planned*100):0;
+    var label=new Date(d+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'short'});
+    rows += '<div class="plan-compare-row">'+
+      '<div><strong>'+esc(label)+'</strong><div class="plan-compare-progress"><div style="width:'+pct+'%"></div></div></div>'+
+      '<div>'+fmtDur(x.planned)+'</div><div>'+fmtDur(x.actual)+'</div><div>'+Math.round(pct)+'%</div>'+
+    '</div>';
+  });
+  if(!rows) rows='<div class="empty-msg-sm">Nenhum estudo planejado nesta semana.</div>';
+  return '<div class="card">'+
+    '<div class="section-title">Planejamento × execução</div>'+
+    '<div class="plan-compare-grid">'+
+      '<div class="plan-compare-card"><div class="kpi">'+fmtDur(c.planned)+'</div><div class="lbl">Planejado</div></div>'+
+      '<div class="plan-compare-card"><div class="kpi">'+fmtDur(c.actual)+'</div><div class="lbl">Realizado do plano</div></div>'+
+      '<div class="plan-compare-card"><div class="kpi">'+fmtPct(c.adherence/100)+'</div><div class="lbl">Cumprimento</div></div>'+
+      '<div class="plan-compare-card"><div class="kpi">'+fmtDur(c.unplanned)+'</div><div class="lbl">Estudo fora do plano</div></div>'+
+    '</div>'+
+    '<div class="plan-compare-note">'+
+      c.completed+'/'+c.total+' estudos tiveram pelo menos uma sessão vinculada'+(c.overdue?' · '+c.overdue+' pendente(s) atrasado(s)':'')+'. '+
+      (c.unplanned>0?'Tempo estudado sem vínculo com o planejamento também é exibido para você separar execução planejada de esforço extra.':'')+
+    '</div>'+
+    '<div class="plan-compare-table">'+
+      '<div class="plan-compare-row head"><div>Dia</div><div>Plan.</div><div>Exec.</div><div>%</div></div>'+
+      rows+
+    '</div>'+
+  '</div>';
+}
+function nextPlanOrder(dateStr){
+  var ps=plansForDate(dateStr);
+  return ps.length ? Math.max.apply(null,ps.map(function(p){return Number(p.order)||0;}))+1 : 1;
+}
 function scheduleReviewIfNeeded(subjectId, topicId){
   var tId = topicId || null;
   var exists = state.reviews.some(function(r){ return !r.done && r.subjectId===subjectId && (r.topicId||null)===tId; });
@@ -553,6 +688,23 @@ function renderTabBar(){
   }).join('') + '</nav>';
 }
 
+
+function renderTodayPlanSummary(){
+  var ps=plansForDate(todayStr());
+  if(!ps.length) return '';
+  var done=ps.filter(function(p){return p.status==='done';}).length;
+  var items=ps.slice(0,4).map(function(p){
+    var s=subjectById(p.subjectId), t=p.topicId?topicById(p.topicId):null, status=planStatus(p);
+    return '<div class="q-row">'+
+      '<span>'+subjectColorDot(s)+' '+esc(s?s.name:'?')+(t?' · '+esc(t.name):'')+'</span>'+
+      '<span>'+('done'===status?'✓ ': '')+(p.plannedMinutes||0)+'min</span>'+
+    '</div>';
+  }).join('');
+  return '<div class="section-title">Plano de hoje <span style="float:right;text-transform:none;letter-spacing:0">'+done+'/'+ps.length+'</span></div>'+
+    '<div class="card">'+items+
+      '<button class="btn btn-outline btn-block" data-action="open-sub" data-sub="planejamento">Ver planejamento completo</button>'+
+    '</div>';
+}
 function renderHoje(){
   var ranked = rankedSubjects();
   var goalDaily = state.goals.daily*60;
@@ -597,6 +749,7 @@ function renderHoje(){
       progressBar(pct, pct>=100?'good':'accent')+
       '<div class="hero-goal-value">'+fmtDur(todaySec)+' de '+fmtDur(goalDaily)+'</div></div>'+
       remindersHtml+
+      renderTodayPlanSummary()+
       '<div class="section-title">Prioridade de hoje</div>'+
       rankedHtml+
     '</div>';
@@ -666,7 +819,7 @@ function renderCronometro(){
       body = '<div class="card">'+
         '<label>Disciplina</label><select id="timerSubject">'+subjOptions+'</select>'+
         '<label>Assunto (opcional)</label><select id="timerTopic"><option value="">—</option></select>'+
-        '<label>Tipo de estudo</label><select id="timerType">'+STUDY_TYPES.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('')+'</select>'+
+        '<label>Tipo de estudo</label><select id="timerType">'+STUDY_TYPES.map(function(t){ return '<option value="'+t+'" '+(state.ui.preselectType===t?'selected':'')+'>'+t+'</option>'; }).join('')+'</select>'+
         '<button class="btn btn-accent btn-block" data-action="start-timer">Iniciar cronômetro</button>'+
       '</div>';
     }
@@ -789,11 +942,106 @@ function renderDashboard(){
       '<div class="stat-box"><div class="stat-value">'+fmtDur(weekSec)+'</div><div class="stat-label">Semana</div></div>'+
       '<div class="stat-box"><div class="stat-value">'+streak+'d</div><div class="stat-label">Sequência</div></div>'+
     '</div>'+
+    planComparisonHtml(startOfWeekStr(todayStr()),addDaysStr(startOfWeekStr(todayStr()),7))+
     '<div class="section-title">Distribuição por disciplina (30 dias)</div><div class="card">'+distHtml+'</div>'+
     '<div class="section-title">Últimos 7 dias</div><div class="card">'+evoHtml+'</div>'+
   '</div>';
 }
 
+
+function renderPlanejamento(){
+  var weekStart = state.ui.planWeekStart || startOfWeekStr(todayStr());
+  state.ui.planWeekStart = weekStart;
+  var days = planDateRange(weekStart);
+  var weekEndExclusive = addDaysStr(weekStart,7);
+  var planned = plannedSecondsInRange(weekStart,weekEndExclusive);
+  var done = completedPlannedSecondsInRange(weekStart,weekEndExclusive);
+  var completedCount = state.plans.filter(function(p){return p.date>=weekStart&&p.date<weekEndExclusive&&p.status==='done';}).length;
+  var totalCount = state.plans.filter(function(p){return p.date>=weekStart&&p.date<weekEndExclusive&&p.status!=='cancelled';}).length;
+  var adherence = planned>0 ? Math.min(100,done/planned*100) : 0;
+
+  var startLabel = fmtDateBR(weekStart);
+  var endLabel = fmtDateBR(days[6]);
+  var today = todayStr();
+
+  var editing = state.ui.editingPlan ? state.plans.find(function(p){return p.id===state.ui.editingPlan;}) : null;
+  var subjectOptions = state.subjects.map(function(s){ return '<option value="'+s.id+'" '+(editing && s.id===editing.subjectId?'selected':'')+'>'+esc(s.name)+'</option>'; }).join('');
+  var topicOptions = '<option value="">—</option>';
+
+  var daysHtml = days.map(function(dateStr){
+    var ps = plansForDate(dateStr);
+    var dayPlanned = ps.reduce(function(a,p){return a+(Number(p.plannedMinutes)||0)*60;},0);
+    var dayDone = ps.filter(function(p){return p.status==='done';}).reduce(function(a,p){return a+(Number(p.plannedMinutes)||0)*60;},0);
+    var d = new Date(dateStr+'T00:00:00');
+    var dayName = d.toLocaleDateString('pt-BR',{weekday:'long'});
+    var shortDate = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    var items = ps.length ? ps.map(function(p){
+      var s=subjectById(p.subjectId), t=p.topicId?topicById(p.topicId):null, status=planStatus(p), exec=planExecutionFor(p);
+      var actionLabel = status==='done' ? 'Feito' : 'Iniciar';
+      return '<div class="plan-item '+(status==='done'?'done':'')+'">'+
+        '<span class="plan-status '+status+'"></span>'+
+        '<div class="plan-item-main">'+
+          '<div class="plan-item-top">'+subjectColorDot(s)+'<span class="plan-item-name">'+esc(s?s.name:'?')+'</span></div>'+
+          (t?'<div class="plan-item-topic">'+esc(t.name)+'</div>':'')+
+          '<div class="plan-item-meta">'+esc(p.type||'Teoria')+' · '+(p.plannedMinutes||0)+' min'+(exec>0?' · realizado '+fmtDur(exec):'')+'</div>'+
+        '</div>'+
+        '<div class="plan-actions">'+
+          (status!=='done'?'<button class="btn btn-accent" data-action="start-plan" data-id="'+p.id+'">'+actionLabel+'</button>':'')+
+          '<button class="btn btn-outline" data-action="edit-plan" data-id="'+p.id+'">Editar</button>'+
+          '<button class="btn btn-danger" data-action="delete-plan" data-id="'+p.id+'">×</button>'+
+        '</div></div>';
+    }).join('') : '<div class="plan-empty">Nenhum estudo planejado.</div>';
+
+    return '<div class="plan-day '+(dateStr===today?'today':'')+'">'+
+      '<div class="plan-day-head"><div><div class="plan-day-title">'+esc(dayName)+'</div><div class="plan-day-meta">'+shortDate+'</div></div>'+
+      '<div class="plan-day-meta">'+fmtDur(dayDone)+' / '+fmtDur(dayPlanned)+'</div></div>'+items+'</div>';
+  }).join('');
+
+  var selectedSubject = editing ? editing.subjectId : (state.subjects[0]?state.subjects[0].id:'');
+  var topics = selectedSubject ? topicsForSubject(selectedSubject) : [];
+  var selectedTopic = editing && editing.topicId ? editing.topicId : '';
+  var dayValue = editing ? editing.date : todayStr();
+  var typeValue = editing ? editing.type : 'Teoria';
+  var minutesValue = editing ? editing.plannedMinutes : 40;
+  var noteValue = editing ? (editing.note||'') : '';
+  var selectedTypeOptions = STUDY_TYPES.map(function(t){return '<option value="'+t+'" '+(t===typeValue?'selected':'')+'>'+t+'</option>';}).join('');
+
+  var form = state.subjects.length ? '<div class="card"><div class="section-title">'+(editing?'Editar estudo planejado':'Adicionar estudo à semana')+'</div>'+
+    '<form data-action="save-plan">'+
+      '<input type="hidden" name="editId" value="'+(editing?editing.id:'')+'">'+
+      '<div class="plan-form-grid">'+
+        '<div><label>Data</label><input type="date" name="date" value="'+dayValue+'" min="'+weekStart+'" max="'+days[6]+'" required></div>'+
+        '<div><label>Duração planejada</label><input type="number" name="minutes" min="1" max="720" value="'+minutesValue+'" required></div>'+
+        '<div class="full"><label>Disciplina</label><select name="subjectId" id="planSubject" required>'+subjectOptions+'</select></div>'+
+        '<div class="full"><label>Assunto</label><select name="topicId" id="planTopic">'+topics.map(function(t){return '<option value="'+t.id+'" '+(t.id===selectedTopic?'selected':'')+'>'+esc(t.name)+'</option>';}).join('')+'<option value="">— Sem assunto específico —</option></select></div>'+
+        '<div class="full"><label>Tipo de estudo</label><select name="type">'+selectedTypeOptions+'</select></div>'+
+        '<div class="full"><label>Observação (opcional)</label><input type="text" name="note" maxlength="180" value="'+esc(noteValue)+'" placeholder="Ex.: focar nas questões da banca"></div>'+
+      '</div>'+
+      '<button class="btn btn-accent btn-block" type="submit">'+(editing?'Salvar alterações':'Adicionar ao planejamento')+'</button>'+
+      (editing?'<button class="btn btn-outline btn-block" type="button" data-action="cancel-plan-edit">Cancelar</button>':'')+
+    '</form></div>' : '<div class="card">'+emptyState('Cadastre uma disciplina primeiro','O planejamento usa suas disciplinas e assuntos já cadastrados.')+'</div>';
+
+  return screenHeader('Planejamento', {back:'back-to-more'})+
+    '<div class="screen-body">'+
+      '<div class="plan-week-nav"><button class="icon-btn" data-action="plan-prev-week">‹</button><div class="plan-week-label">'+esc(startLabel+' — '+endLabel)+'</div><button class="icon-btn" data-action="plan-next-week">›</button></div>'+
+      '<div class="week-kpi">'+
+        '<div class="stat-box"><div class="stat-value">'+fmtDur(planned)+'</div><div class="stat-label">Planejado</div></div>'+
+        '<div class="stat-box"><div class="stat-value">'+completedCount+'/'+totalCount+'</div><div class="stat-label">Concluídos</div></div>'+
+        '<div class="stat-box"><div class="stat-value">'+fmtPct(adherence)+'</div><div class="stat-label">Aderência</div></div>'+
+      '</div>'+
+      '<div class="card">'+progressBar(adherence, adherence>=80?'good':'accent')+'<div class="goal-val">Aderência resume o quanto do tempo planejado já foi executado por sessões vinculadas ao plano.</div></div>'+
+      planComparisonHtml(weekStart,weekEndExclusive)+
+      '<div class="plan-week-grid">'+daysHtml+'</div>'+
+      form+
+      '<div class="card"><div class="section-title">Atalhos</div>'+
+        '<div class="plan-template-row">'+
+          '<button class="btn btn-outline btn-xs" data-action="copy-prev-week">Copiar semana anterior</button>'+
+          '<button class="btn btn-outline btn-xs" data-action="clear-current-week">Limpar semana</button>'+
+          '<button class="btn btn-outline btn-xs" data-action="plan-today">Ir para esta semana</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
 function renderCalendario(){
   var base = state.ui.calMonth ? new Date(state.ui.calMonth+'-01T00:00:00') : new Date();
   var year = base.getFullYear(), month = base.getMonth();
@@ -948,6 +1196,7 @@ function renderMais(){
       case 'questoes': return renderQuestoes();
       case 'dashboard': return renderDashboard();
       case 'calendario': return renderCalendario();
+      case 'planejamento': return renderPlanejamento();
       case 'metas': return renderMetas();
       case 'estatisticas': return renderEstatisticas();
       case 'config': return renderConfig();
@@ -958,6 +1207,7 @@ function renderMais(){
     {key:'questoes', label:'Questões & Desempenho'},
     {key:'dashboard', label:'Dashboard'},
     {key:'calendario', label:'Calendário'},
+    {key:'planejamento', label:'Planejamento semanal'},
     {key:'metas', label:'Metas'},
     {key:'estatisticas', label:'Estatísticas'},
     {key:'config', label:'Configurações & Backup'}
@@ -987,8 +1237,9 @@ function populateTopicSelect(subjSelId, topicSelId){
   var subjectId = subjSel.value;
   var topics = topicsForSubject(subjectId);
   var current = topicSel.value;
+  var desired = (topicSelId==='timerTopic' && state.ui.preselectTopic) ? state.ui.preselectTopic : current;
   topicSel.innerHTML = '<option value="">—</option>' + topics.map(function(t){ return '<option value="'+t.id+'">'+esc(t.name)+'</option>'; }).join('');
-  if (topics.some(function(t){ return t.id===current; })) topicSel.value = current;
+  if (topics.some(function(t){ return t.id===desired; })) topicSel.value = desired;
 }
 
 function timerElapsedMs(t){
@@ -1057,7 +1308,7 @@ appEl.addEventListener('click', function(e){
         state.ui.tab = btn.dataset.tab;
         if (btn.dataset.tab==='mais') state.ui.subScreen=null;
         state.ui.confirmDeleteSubject=null; state.ui.confirmReset=false;
-        state.ui.editingSubject=null; state.ui.preselectSubject=null;
+        state.ui.editingSubject=null; state.ui.preselectSubject=null; state.ui.preselectTopic=null; state.ui.preselectType=null; state.ui.activePlanId=null;
         render();
         break;
       case 'open-sub':
@@ -1089,6 +1340,7 @@ appEl.addEventListener('click', function(e){
         state.sessions = state.sessions.filter(function(s){ return s.subjectId!==idDel; });
         state.questionLogs = state.questionLogs.filter(function(q){ return q.subjectId!==idDel; });
         state.reviews = state.reviews.filter(function(r){ return r.subjectId!==idDel; });
+        state.plans = state.plans.filter(function(p){ return p.subjectId!==idDel; });
         state.ui.confirmDeleteSubject=null; state.ui.expandedSubject=null;
         persist(); render();
         break;
@@ -1106,7 +1358,8 @@ appEl.addEventListener('click', function(e){
         if (!subjSel || !subjSel.value) break;
         var topicSel = document.getElementById('timerTopic');
         var typeSel = document.getElementById('timerType');
-        state.activeTimer = { subjectId: subjSel.value, topicId: topicSel.value||null, type: typeSel.value, startedAt: Date.now(), pausedAt: null, totalPausedMs: 0 };
+        state.activeTimer = { subjectId: subjSel.value, topicId: topicSel.value||null, type: typeSel.value, planId: state.ui.activePlanId||null, startedAt: Date.now(), pausedAt: null, totalPausedMs: 0 };
+        state.ui.preselectSubject=null; state.ui.preselectTopic=null; state.ui.preselectType=null;
         persist(); render();
         break;
       }
@@ -1126,7 +1379,11 @@ appEl.addEventListener('click', function(e){
           var seconds = Math.round(timerElapsedMs(state.activeTimer)/1000);
           var t = state.activeTimer;
           if (seconds>0){
-            state.sessions.push({ id:uid(), subjectId:t.subjectId, topicId:t.topicId, type:t.type, seconds:seconds, date:todayStr(), source:'timer', ts:Date.now() });
+            state.sessions.push({ id:uid(), subjectId:t.subjectId, topicId:t.topicId, type:t.type, seconds:seconds, date:todayStr(), source:'timer', planId:t.planId||null, ts:Date.now() });
+            if (t.planId){
+              var linkedPlan = state.plans.find(function(p){return p.id===t.planId;});
+              if (linkedPlan) linkedPlan.status='done';
+            }
             scheduleReviewIfNeeded(t.subjectId, t.topicId);
           }
           state.activeTimer = null;
@@ -1172,6 +1429,47 @@ appEl.addEventListener('click', function(e){
         state = defaultState();
         persist(); render();
         break;
+      case 'start-plan': {
+        var plan = state.plans.find(function(p){return p.id===btn.dataset.id;});
+        if (plan){
+          state.ui.tab='cronometro'; state.ui.subScreen=null; state.ui.preselectSubject=plan.subjectId;
+          state.ui.preselectTopic=plan.topicId||null; state.ui.preselectType=plan.type||'Teoria'; state.ui.activePlanId=plan.id;
+          render();
+        }
+        break;
+      }
+      case 'edit-plan':
+        state.ui.editingPlan=btn.dataset.id; render(); break;
+      case 'cancel-plan-edit':
+        state.ui.editingPlan=null; render(); break;
+      case 'delete-plan':
+        state.plans = state.plans.filter(function(p){return p.id!==btn.dataset.id;});
+        if(state.ui.editingPlan===btn.dataset.id) state.ui.editingPlan=null;
+        persist(); render(); break;
+      case 'plan-prev-week':
+        state.ui.planWeekStart=addDaysStr(state.ui.planWeekStart||startOfWeekStr(todayStr()),-7);
+        state.ui.editingPlan=null; render(); break;
+      case 'plan-next-week':
+        state.ui.planWeekStart=addDaysStr(state.ui.planWeekStart||startOfWeekStr(todayStr()),7);
+        state.ui.editingPlan=null; render(); break;
+      case 'plan-today':
+        state.ui.planWeekStart=startOfWeekStr(todayStr()); state.ui.editingPlan=null; render(); break;
+      case 'copy-prev-week': {
+        var target=state.ui.planWeekStart||startOfWeekStr(todayStr()), source=addDaysStr(target,-7);
+        var sourcePlans=state.plans.filter(function(p){return p.date>=source&&p.date<target;});
+        sourcePlans.forEach(function(p){
+          var offset=daysDiffStr(source,p.date);
+          state.plans.push(Object.assign({},p,{id:uid(),date:addDaysStr(target,offset),status:'planned',order:nextPlanOrder(addDaysStr(target,offset)),createdAt:Date.now()}));
+        });
+        persist(); render(); break;
+      }
+      case 'clear-current-week': {
+        var ws=state.ui.planWeekStart||startOfWeekStr(todayStr()), we=addDaysStr(ws,7);
+        var anyPlans=state.plans.some(function(p){return p.date>=ws&&p.date<we;});
+        if(anyPlans && !window.confirm('Apagar todos os estudos planejados desta semana?')) break;
+        state.plans=state.plans.filter(function(p){return !(p.date>=ws&&p.date<we);});
+        state.ui.editingPlan=null; persist(); render(); break;
+      }
       case 'cal-prev-month': shiftCalMonth(-1); render(); break;
       case 'cal-next-month': shiftCalMonth(1); render(); break;
       case 'select-cal-day':
@@ -1239,6 +1537,34 @@ appEl.addEventListener('submit', function(e){
         if (!mSubjectId || !minutes || minutes<1) break;
         state.sessions.push({ id: uid(), subjectId: mSubjectId, topicId: mTopicId, type: mType, seconds: minutes*60, date: mDate, source:'manual', ts: Date.now() });
         if (mType !== 'Revisão') scheduleReviewIfNeeded(mSubjectId, mTopicId);
+        persist(); render();
+        break;
+      }
+      case 'save-plan': {
+        var editId = fd.get('editId');
+        var pDate = fd.get('date') || todayStr();
+        var pSubject = fd.get('subjectId');
+        var pTopic = fd.get('topicId') || null;
+        var pMinutes = Number(fd.get('minutes'))||0;
+        var pType = fd.get('type') || 'Teoria';
+        var pNote = (fd.get('note')||'').trim();
+        if (!pSubject || pMinutes<1) break;
+        if (editId){
+          var existing = state.plans.find(function(p){return p.id===editId;});
+          if (existing){
+            existing.date=pDate; existing.subjectId=pSubject; existing.topicId=pTopic;
+            existing.plannedMinutes=pMinutes; existing.type=pType; existing.note=pNote;
+            existing.status=existing.status==='done' ? 'done' : 'planned';
+          }
+          state.ui.editingPlan=null;
+        } else {
+          state.plans.push({
+            id:uid(), date:pDate, subjectId:pSubject, topicId:pTopic,
+            plannedMinutes:pMinutes, type:pType, note:pNote,
+            status:'planned', order:nextPlanOrder(pDate), createdAt:Date.now()
+          });
+        }
+        state.ui.planWeekStart=startOfWeekStr(pDate);
         persist(); render();
         break;
       }
