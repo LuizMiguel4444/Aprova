@@ -282,7 +282,7 @@ function defaultState(){
     ui: { tab:'hoje', subScreen:null, calMonth:null, expandedSubject:null, selectedCalDay:null,
           editingSubject:null, confirmDeleteSubject:null, confirmReset:false, preselectSubject:null,
           syncConflict:null, scheduleDay:null, confirmAutoSchedule:false,
-          editingScheduleBlock:null, editingCycleItem:null }
+          editingScheduleBlock:null, editingCycleItem:null, confirmDeleteSession:null }
   };
 }
 
@@ -452,7 +452,7 @@ function completeScheduleBlock(blockId){
   if (isBlockDoneOn(b, t)) return;
   if (!b.doneDates) b.doneDates = [];
   b.doneDates.push(t);
-  state.sessions.push({ id:uid(), subjectId:b.subjectId, topicId:b.topicId, type:b.type, seconds:b.minutes*60, date:t, source:'cronograma', ts:Date.now() });
+  state.sessions.push({ id:uid(), subjectId:b.subjectId, topicId:b.topicId, type:b.type, seconds:b.minutes*60, date:t, source:'cronograma', scheduleBlockId:b.id, ts:Date.now() });
   scheduleReviewIfNeeded(b.subjectId, b.topicId);
 }
 function autoGenerateSchedule(){
@@ -493,12 +493,21 @@ function advanceCycle(logSession){
   if (idx<0) return;
   var item = state.cycle[idx];
   if (logSession){
-    state.sessions.push({ id:uid(), subjectId:item.subjectId, topicId:item.topicId, type:item.type, seconds:item.minutes*60, date:todayStr(), source:'ciclo', ts:Date.now() });
+    state.sessions.push({ id:uid(), subjectId:item.subjectId, topicId:item.topicId, type:item.type, seconds:item.minutes*60, date:todayStr(), source:'ciclo', cycleItemId:item.id, ts:Date.now() });
     scheduleReviewIfNeeded(item.subjectId, item.topicId);
   }
   var next = idx+1;
   if (next>=state.cycle.length){ next=0; state.cycleLaps=(state.cycleLaps||0)+1; }
   state.cyclePointer = next;
+}
+function undoCycleAdvance(){
+  if (!state.cycle.length) return;
+  var newPointer = state.cyclePointer - 1;
+  if (newPointer < 0){
+    newPointer = state.cycle.length - 1;
+    state.cycleLaps = Math.max(0, (state.cycleLaps||0) - 1);
+  }
+  state.cyclePointer = newPointer;
 }
 
 
@@ -959,7 +968,7 @@ function renderCalendario(){
     var daySessions = state.sessions.filter(function(s){ return s.date===dsel; });
     var dayReviews = state.reviews.filter(function(r){ return r.dueDate===dsel; });
     detail = '<div class="card"><div class="section-title">'+fmtDateBR(dsel)+'</div>'+
-      (daySessions.length ? daySessions.map(function(s){ var sub=subjectById(s.subjectId); return '<div class="q-row"><span>'+esc(sub?sub.name:'?')+' · '+esc(s.type)+'</span><span>'+fmtDur(s.seconds)+'</span></div>'; }).join('') : '<div class="empty-msg-sm">Sem estudos.</div>')+
+      (daySessions.length ? daySessions.map(function(s){ var sub=subjectById(s.subjectId); return '<div class="q-row"><span>'+esc(sub?sub.name:'?')+' · '+esc(s.type)+' · '+fmtDur(s.seconds)+'</span><button class="btn btn-sm '+(state.ui.confirmDeleteSession===s.id?'btn-danger armed':'btn-danger')+'" data-action="delete-session" data-id="'+s.id+'">'+(state.ui.confirmDeleteSession===s.id?'Confirmar':'Excluir')+'</button></div>'; }).join('') : '<div class="empty-msg-sm">Sem estudos.</div>')+
       (dayReviews.length ? dayReviews.map(function(r){ var sub=subjectById(r.subjectId); return '<div class="q-row"><span>Revisão · '+esc(sub?sub.name:'?')+'</span><span>'+(r.done?'feita':'pendente')+'</span></div>'; }).join('') : '')+
     '</div>';
   }
@@ -1376,18 +1385,21 @@ appEl.addEventListener('click', function(e){
         state.ui.editingSubject=null; state.ui.preselectSubject=null;
         state.ui.confirmAutoSchedule=false;
         state.ui.editingScheduleBlock=null; state.ui.editingCycleItem=null;
+        state.ui.confirmDeleteSession=null;
         render();
         break;
       case 'open-sub':
         state.ui.subScreen = btn.dataset.sub; state.ui.confirmReset=false;
         state.ui.confirmAutoSchedule=false;
         state.ui.editingScheduleBlock=null; state.ui.editingCycleItem=null;
+        state.ui.confirmDeleteSession=null;
         render();
         break;
       case 'back-to-more':
         state.ui.subScreen=null; state.ui.confirmReset=false;
         state.ui.confirmAutoSchedule=false;
         state.ui.editingScheduleBlock=null; state.ui.editingCycleItem=null;
+        state.ui.confirmDeleteSession=null;
         render();
         break;
       case 'goto-cronograma':
@@ -1418,6 +1430,27 @@ appEl.addEventListener('click', function(e){
         state.ui.editingScheduleBlock = null;
         render();
         break;
+      case 'delete-session': {
+        var delSessId = btn.dataset.id;
+        if (state.ui.confirmDeleteSession !== delSessId){ state.ui.confirmDeleteSession = delSessId; render(); break; }
+        var sessToDelete = state.sessions.find(function(s){ return s.id===delSessId; });
+        if (sessToDelete){
+          if (sessToDelete.scheduleBlockId){
+            var srcBlock = state.schedule.find(function(b){ return b.id===sessToDelete.scheduleBlockId; });
+            if (srcBlock && srcBlock.doneDates){
+              var ddPos = srcBlock.doneDates.indexOf(sessToDelete.date);
+              if (ddPos>-1) srcBlock.doneDates.splice(ddPos,1);
+            }
+          }
+          if (sessToDelete.cycleItemId){
+            undoCycleAdvance();
+          }
+        }
+        state.sessions = state.sessions.filter(function(s){ return s.id!==delSessId; });
+        state.ui.confirmDeleteSession = null;
+        persist(); render();
+        break;
+      }
       case 'delete-schedule-block':
         state.schedule = state.schedule.filter(function(b){ return b.id!==btn.dataset.id; });
         if (state.ui.editingScheduleBlock===btn.dataset.id) state.ui.editingScheduleBlock=null;
@@ -1583,10 +1616,11 @@ appEl.addEventListener('click', function(e){
         state = defaultState();
         persist(); render();
         break;
-      case 'cal-prev-month': shiftCalMonth(-1); render(); break;
-      case 'cal-next-month': shiftCalMonth(1); render(); break;
+      case 'cal-prev-month': shiftCalMonth(-1); state.ui.confirmDeleteSession=null; render(); break;
+      case 'cal-next-month': shiftCalMonth(1); state.ui.confirmDeleteSession=null; render(); break;
       case 'select-cal-day':
         state.ui.selectedCalDay = state.ui.selectedCalDay===btn.dataset.date ? null : btn.dataset.date;
+        state.ui.confirmDeleteSession=null;
         render();
         break;
     }
