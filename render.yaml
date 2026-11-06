@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: aprova
+    runtime: static
+    buildCommand: echo "sem build"
+    staticPublishPath: .
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
