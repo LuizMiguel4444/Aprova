@@ -84,15 +84,23 @@ const TPL={bb:[
 ["ven","Vendas e Negociação","#c79a00",3,15,22.5,"Marketing e CRM|Etapas da venda consultiva|Negociação|Atendimento e comunicação|Comportamento do cliente|Pós-venda e fidelização|Ética em vendas"],
 ["ing","Inglês","#6b7a99",1,5,5,"Interpretação de textos|Vocabulário e cognatos|Tempos verbais|Conectivos e pronomes"],
 ["red","Redação","#8a6a4a",1,0,0,"Texto dissertativo-argumentativo"]]};
-const mk=(n,tp)=>({n,cfg:{...CFG},subs:(TPL[tp]||[]).map(a=>({id:a[0],n:a[1],c:a[2],w:a[3],q:a[4],p:a[5],t:a[6].split("|")})),ci:0,day:null,log:[],rev:[],err:[],pr:{},sim:[]});
+// IBGE, função Recenseador (Edital nº 03/2026, banca Cesgranrio): 60 questões em 4 h, prova prevista para 31/01/2027, mínimo de 18 pontos no total e 1 ponto por disciplina
+TPL.ibge=[
+["lp","Língua Portuguesa","#2f6fed",3,15,15,"Compreensão de texto|Significação das palavras: sinônimos, antônimos e homônimos|Pontuação, estrutura e sequência lógica de frases e parágrafos|Ortografia oficial e acentuação gráfica|Classes das palavras|Concordância nominal e verbal|Regência nominal e verbal|Verbos regulares e irregulares e vozes dos verbos|Emprego dos pronomes"],
+["mt","Matemática","#e0823a",3,15,15,"Números naturais: operações, propriedades, múltiplos e divisores|Números inteiros e racionais: operações e problemas|Razão, proporção e divisão proporcional|Regra de três simples e porcentagem|Equações do 1º grau e problemas|Medidas de comprimento, superfície, volume, massa e tempo|Áreas, perímetros e volumes|Tabelas, gráficos e quadros informativos|Mapas, croquis, esquemas e representações gráficas"],
+["ct","Conhecimentos Técnicos (apostila do Censo Agro)","#0f8f6f",6,30,30,"IBGE: missão, história (1936) e rede (27 SES e 566 agências)|Censo Agropecuário: conceito de censo e termos agropecuário, florestal e aquícola|12º Censo: histórico dos censos (1920 a 2017) e objetivos (a apostila cita referência 2025 e 2026)|12º Censo: concepção (FAO), abrangência e impactos (Pronaf)|Estrutura permanente e temporária (Sede, SES, CNQ e CEQ)|Postos censitários e cargos (AOR, ACA, ACI, ACR, ACS; edital diz Agente e apostila diz Assistente)|Funções do Analista Censitário e do ACQ|Atribuições do ACR, do ACS e do Recenseador|Posto censitário e papel do Recenseador|Instrumentos: setor censitário, Mapa do Setor, Descritivo e MME|DMC: mapa digital, lista de endereços (lista prévia) e questionários|Manual do Recenseador|Navegação em campo e legenda do mapa|Escala e cálculo de distâncias (ex.: 1:50.000)|Imagem de satélite: forma, tamanho, localização e cores|Descritivo do setor: ponto inicial e final e perímetro|Delimitadores de setor (rios, rodovias, caminhos e linhas secas)|Setores a excluir, estruturas não setorizadas e acessibilidade|Divisão político-administrativa (UFs, municípios, distritos e subdistritos)|Setor censitário e geocódigo|Situação e tipo de setor (classificações rurais e urbanas)|Tipos de setores censitários (a a i)|Povos e Comunidades Tradicionais: conceito, lista e autodeclaração|Categorias de áreas de PCTs e AIOs|Acesso a PCTs: consulta (OIT 169), FUNAI e SESAI|Endereço: padrão CNEFE, logradouro e localidade|CEP, número, modificador e complemento|Ponto de referência e sigilo estatístico|Coordenadas geográficas: latitude e longitude|Captura de coordenadas com GPS e DMC|Unidades recenseáveis, data e período de referência|Unidades não recenseáveis e produção de subsistência|Atividades e locais não recenseáveis|Conceito de estabelecimento agropecuário e exemplos de atividades|Produtores sem área|Estabelecimentos de indústrias e confinamento (boitel)|Propriedade rural x estabelecimento agropecuário|Estabelecimentos em mais de um setor (sede)|Áreas contínuas e não contínuas (as 4 condições)|Áreas não contínuas em municípios diferentes|Sucessão, partilha e litígio|Estabelecimentos novos ou sem produção|Exploração comunitária (coletiva e individual)"]];
+const TPLC={ibge:{exam:"2027-01-31",pt:240,cut:30}};
+const mk=(n,tp)=>({n,cfg:{...CFG,...(TPLC[tp]||{})},subs:(TPL[tp]||[]).map(a=>({id:a[0],n:a[1],c:a[2],w:a[3],q:a[4],p:a[5],t:a[6].split("|")})),ci:0,day:null,log:[],rev:[],err:[],pr:{},sim:[]});
 let S;try{S=JSON.parse(localStorage.getItem("rotaestudos"))}catch(e){}
 if(!S){let o=null;try{o=JSON.parse(localStorage.getItem("rotabb"))}catch(e){}
  const b=mk("BB — Agente Comercial","bb");if(o)Object.assign(b,o,{cfg:{...CFG,...o.cfg}});
  S={v:2,cur:"p1",profiles:{p1:b}}}
-function norm(){Object.values(S.profiles).forEach(p=>{const z=mk(p.n||"Concurso");Object.keys(z).forEach(k=>{if(p[k]==null)p[k]=z[k]});p.cfg={...CFG,...p.cfg};if(!Array.isArray(p.cfg.dias))p.cfg.dias=CFG.dias;p.subs.forEach(s=>{s.id=s.id||uid();s.t=Array.isArray(s.t)?s.t:[];s.w=+s.w||0;s.q=+s.q||0;s.p=+s.p||0;s.c=s.c||"#2f6fed";s.n=s.n||"Disciplina"});["log","rev","err","sim"].forEach(k=>p[k].forEach(x=>{x.id=x.id||uid()}));p.err.forEach(e=>{e.st=e.st||"pend"})})}
+function norm(){Object.values(S.profiles).forEach(p=>{const z=mk(p.n||"Concurso");Object.keys(z).forEach(k=>{if(p[k]==null)p[k]=z[k]});p.cfg={...CFG,...p.cfg};if(!Array.isArray(p.cfg.dias))p.cfg.dias=CFG.dias;p.subs.forEach(s=>{s.id=s.id||uid();s.t=Array.isArray(s.t)?s.t:[];s.w=+s.w||0;s.q=+s.q||0;s.p=+s.p||0;s.c=s.c||"#2f6fed";s.n=s.n||"Disciplina"});["log","rev","err","sim"].forEach(k=>p[k].forEach(x=>{x.id=x.id||uid()}));p.err.forEach(e=>{e.st=e.st||"pend"})});seed()}
+function seed(){S.seeded=Array.isArray(S.seeded)?S.seeded:[];if(!S.seeded.includes("ibge")){S.seeded.push("ibge");if(!Object.values(S.profiles).some(p=>p.n==="IBGE — Recenseador (Censo Agro)"))S.profiles["p"+uid()]=mk("IBGE — Recenseador (Censo Agro)","ibge")}}
 norm();
 const P=()=>S.profiles[S.cur];
 const save=()=>{try{localStorage.setItem("rotaestudos",JSON.stringify(S));return 1}catch(e){toast("Sem espaço para salvar. Exclua fotos antigas ou exporte um backup.");return 0}};
+save();
 const sb=(p,id)=>p.subs.find(x=>x.id===id)||{n:"(disciplina removida)",c:"#8a93a8",t:[],w:0};
 const cyc=p=>p.subs.flatMap(s=>Array.from({length:s.w},(_,i)=>({id:s.id,k:(i+.5)/s.w}))).sort((a,b)=>a.k-b.k||a.id.localeCompare(b.id)).map(x=>x.id);
 const BM=p=>Math.max(10,p.cfg.th+p.cfg.qm+p.cfg.em);
@@ -134,7 +142,7 @@ function hoje(){
 <h1>${n==0&&done==0?"Dia de descanso":done>=n?"Meta do dia batida":"Faltam "+(n-done)+(n-done>1?" blocos":" bloco")+" hoje"}</h1>
 <div class="seg">${seg}</div>
 <div class="mu" style="margin-top:8px">${hm(tm0)} estudadas hoje · meta de ${n} ${n==1?"bloco":"blocos"} (${n*bm} min) · sequência de ${st} ${st==1?"dia":"dias"}${dt!=null&&dt>=0?" · prova em "+dt+" dias":""}</div>
-${ip?inst():""}
+${ip?inst():""}${sugHTML(p)}
 <h2>Revisões de hoje (${due.length})</h2>${rv}
 <h2>${n==0&&done==0?"Bloco bônus (opcional)":"Blocos de hoje"}</h2>${cards}`;
 }
@@ -144,7 +152,7 @@ function plano(){
  const ph=(dt!=null&&dt>=0&&dt<=60)||age>=180?3:age>=90?2:1;
  const F3=[["Fase 1: Base","Percorra o ciclo completo com teoria curta e questões simples, criando o hábito e cobrindo todo o conteúdo."],["Fase 2: Questões","A maior parte do tempo em questões no estilo da banca, simulado a cada 2 semanas e revisão do caderno de erros."],["Fase 3: Reta final","Com a data da prova definida, simulados completos e cronometrados toda semana e revisão do que você mais erra."]];
  const rows=p.subs.map(s=>`<span class="row"><i class="dot" style="background:${s.c}"></i>${E(s.n)}</span><span>${s.q||"—"}</span><span>${s.p||"—"}</span><span>${s.w}/${tw}</span>`).join("");
- return `<h1>Plano de ${E(p.n)}</h1>
+ return `<h1>Plano de ${E(p.n)}</h1>${sugHTML(p)}
 <div class="card"><b>Método</b><ol><li>Teoria curta, só o que você precisa para resolver questões.</li><li>Questões logo em seguida, que é onde se aprende de verdade.</li><li>Caderno de erros, anotando o motivo de cada erro.</li><li>Revisões em 1, 7 e 30 dias, agendadas pelo app.</li><li>Simulado cronometrado a cada 2 semanas.</li></ol></div>
 <h2>Fases</h2>${F3.map((f,i)=>`<div class="card" style="${i+1==ph?"border:2px solid var(--pr)":""}"><b>${f[0]}</b>${i+1==ph?` <span class="tag">você está aqui</span>`:""}<div class="mu">${f[1]}</div></div>`).join("")}
 <h2>Divisão do tempo</h2>
@@ -314,7 +322,7 @@ function SH(){
   return W(sh.id?"Editar disciplina":"Nova disciplina",L("Nome",`<input id="sn" maxlength="60" value="${E(s.n)}">`)+`<div class="g2">${L("Cor",`<input id="sc" type="color" value="${s.c}">`)}${L("Blocos por ciclo (0 a 20)",N("sw",s.w))}${L("Questões na prova",N("sq",s.q))}${L("Pontos na prova",`<input id="sp" type="number" inputmode="decimal" min="0" step="0.5" value="${s.p}">`)}</div>`+L("Tópicos (um por linha)",`<textarea id="st" rows="6">${E(s.t.join("\n"))}</textarea>`),"ssave")}
  if(sh.t=="sim"){const ls=p.subs.filter(s=>s.q>0).length?p.subs.filter(s=>s.q>0):p.subs;
   return W("Registrar simulado",L("Nome ou fonte (opcional)",`<input id="xn" maxlength="60" placeholder="Ex.: Simulado 3">`)+`<div class="g2">${L("Data",`<input id="xd" type="date" value="${T}" max="${T}">`)}${L("Tempo gasto (min)",N("xm",""))}</div>`+L("Questões em branco (opcional)",N("xb",""))+`<div class="mu" style="margin-top:12px">Acertos por disciplina (deixe em branco o que não fez)</div>`+ls.map(s=>`<div class="row" style="margin-top:6px"><span style="flex:2" class="mu"><i class="dot" style="background:${s.c}"></i> ${E(s.n)}</span><input id="xa_${s.id}" type="number" inputmode="numeric" min="0" placeholder="acertos" style="flex:1;margin:0"><span class="mu">de</span><input id="xt_${s.id}" type="number" inputmode="numeric" min="0" value="${s.q}" style="flex:1;margin:0"></div>`).join("")+L("Observações (opcional)",`<textarea id="xo" rows="3" maxlength="500" placeholder="O que deu errado, o que revisar…"></textarea>`),"xsave")}
- return W("Novo concurso",L("Nome",`<input id="cn" maxlength="60" placeholder="Ex.: INSS, Receita Federal">`)+L("Começar com",`<select id="ct"><option value="">Em branco</option><option value="bb">Modelo BB — Agente Comercial</option></select>`),"csave");
+ return W("Novo concurso",L("Nome",`<input id="cn" maxlength="60" placeholder="Ex.: INSS, Receita Federal">`)+L("Começar com",`<select id="ct"><option value="">Em branco</option><option value="bb">Modelo BB — Agente Comercial</option><option value="ibge">Modelo IBGE — Recenseador (Censo Agro)</option></select>`),"csave");
 }
 function TS(){
  const p=P(),ph=PH(p),c=ph[tmo.i]||["Etapa",0];
@@ -328,6 +336,16 @@ function TS(){
 setInterval(()=>{if(!tmo)return;const was=tmo.run;if(was){const n=Date.now(),d=n-tmo.last,ph=PH(P())[tmo.i];tmo.last=n;tmo.el+=d;tmo.left-=d;if(ph)tmo.pe[ph[0]]=(tmo.pe[ph[0]]||0)+d;if(tmo.left<=0){tmo.left=0;tmo.run=false;try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}}}
  if(was&&!tmo.run)return render();const a=$("#tc"),b=$("#te");if(a)a.textContent=fmt(tmo.left);if(b)b.textContent=fmt(tmo.el)},1000);
 
+function sug(p){
+ if(p.adjD&&p.adjD>addD(-7))return[];
+ const f=addD(-29),ac=p.cfg.ag,r=[];
+ p.subs.filter(s=>s.w>0).forEach(s=>{const a=accW(p,f,T,s.id);if(a&&a.q>=10)r.push({s,a:Math.round(a.a)})});
+ const up=r.filter(x=>x.a<ac-10&&x.s.w<20).sort((a,b)=>a.a-b.a).slice(0,2).map(x=>({...x,to:x.s.w+1}));
+ const dn=r.filter(x=>x.a>=ac+10&&x.s.w>1).sort((a,b)=>b.a-a.a).slice(0,up.length).map(x=>({...x,to:x.s.w-1}));
+ return[...up,...dn];
+}
+function sugHTML(p){const l=sug(p);if(!l.length)return"";
+ return `<div class="card" style="border-left:6px solid var(--yl)"><b>Sugestão de ajuste do plano</b><div class="mu">Com base no seu acerto dos últimos 30 dias (meta: ${p.cfg.ag}%). O plano só muda se você confirmar.</div>${l.map(x=>`<div class="row sp" style="margin-top:8px"><span>${E(x.s.n)}</span><span class="mu">${x.a}% · ${x.s.w} → <b>${x.to}</b> blocos por ciclo</span></div>`).join("")}<div class="row" style="margin-top:10px"><button class="btn" data-a="sapply">Aplicar</button><button class="btn g" data-a="sskip">Agora não</button></div></div>`}
 const V={hoje,plano,desemp,erros,metas};
 function render(){
  T=ymd(new Date());const p=P();if(!p.day||p.day.d!==T)p.day={d:T,ci0:p.ci};
@@ -402,7 +420,9 @@ const act={
  cpy(){const j=JSON.stringify(S);(navigator.clipboard?navigator.clipboard.writeText(j):Promise.reject()).then(()=>toast("Dados copiados.")).catch(()=>{$("#bk").value=j;$("#bk").select();toast("Copie o texto da caixa.")})},
  impt(){imp(val("bk"))},
  impgo(){mut(()=>{S=pend;norm()},"Dados importados.");pend=null},
- reset(){mut(()=>{S={v:2,cur:"p1",profiles:{p1:mk("Meu concurso","")}}},"Todos os dados apagados.")}
+ sapply(){const p=P(),l=sug(p);if(!l.length)return;mut(()=>{l.forEach(x=>{const s=p.subs.find(y=>y.id==x.s.id);if(s)s.w=x.to});p.adjD=T},"Plano ajustado.")},
+ sskip(){P().adjD=T;save();render()},
+ reset(){mut(()=>{S={v:2,cur:"p1",seeded:["ibge"],profiles:{p1:mk("Meu concurso","")}}},"Todos os dados apagados.")}
 };
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&!b.disabled&&act[b.dataset.a])act[b.dataset.a](b.dataset)});
 document.addEventListener("change",e=>{const t=e.target,d=t.dataset;

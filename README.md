@@ -26,7 +26,7 @@ O projeto já inclui `manifest.webmanifest`, `sw.js` (funciona offline) e os íc
 - **Android (Chrome):** use o botão **Instalar app** que aparece no app, ou o menu do navegador > **Instalar app**.
 - **iPhone (Safari):** toque em **Compartilhar** > **Adicionar à Tela de Início**.
 
-Ao mexer em arquivos da lista `A` do `sw.js`, troque o valor de `V` (por exemplo, `aprova-v3`) para atualizar o cache nos aparelhos.
+Ao mexer em arquivos da lista `A` do `sw.js`, troque o valor de `V` (por exemplo, `aprova-v4`) para atualizar o cache nos aparelhos.
 
 ## Seus dados
 Tudo fica salvo no `localStorage` do navegador, neste aparelho e neste endereço. Ao mudar de endereço (por exemplo, do Claude para o Render), use **Metas > Backup**: exporte no lugar antigo e importe no novo. Faça um backup de vez em quando.

@@ -1,4 +1,4 @@
-const V = "aprova-v2";
+const V = "aprova-v3";
 const A = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png", "icons/apple-touch-icon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(A)).then(() => self.skipWaiting()));
