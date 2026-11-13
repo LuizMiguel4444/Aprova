@@ -90,18 +90,21 @@ TPL.ibge=[
 ["mt","Matemática","#e0823a",3,15,15,"Números naturais: operações, propriedades, múltiplos e divisores|Números inteiros e racionais: operações e problemas|Razão, proporção e divisão proporcional|Regra de três simples e porcentagem|Equações do 1º grau e problemas|Medidas de comprimento, superfície, volume, massa e tempo|Áreas, perímetros e volumes|Tabelas, gráficos e quadros informativos|Mapas, croquis, esquemas e representações gráficas"],
 ["ct","Conhecimentos Técnicos (apostila do Censo Agro)","#0f8f6f",6,30,30,"IBGE: missão, história (1936) e rede (27 SES e 566 agências)|Censo Agropecuário: conceito de censo e termos agropecuário, florestal e aquícola|12º Censo: histórico dos censos (1920 a 2017) e objetivos (a apostila cita referência 2025 e 2026)|12º Censo: concepção (FAO), abrangência e impactos (Pronaf)|Estrutura permanente e temporária (Sede, SES, CNQ e CEQ)|Postos censitários e cargos (AOR, ACA, ACI, ACR, ACS; edital diz Agente e apostila diz Assistente)|Funções do Analista Censitário e do ACQ|Atribuições do ACR, do ACS e do Recenseador|Posto censitário e papel do Recenseador|Instrumentos: setor censitário, Mapa do Setor, Descritivo e MME|DMC: mapa digital, lista de endereços (lista prévia) e questionários|Manual do Recenseador|Navegação em campo e legenda do mapa|Escala e cálculo de distâncias (ex.: 1:50.000)|Imagem de satélite: forma, tamanho, localização e cores|Descritivo do setor: ponto inicial e final e perímetro|Delimitadores de setor (rios, rodovias, caminhos e linhas secas)|Setores a excluir, estruturas não setorizadas e acessibilidade|Divisão político-administrativa (UFs, municípios, distritos e subdistritos)|Setor censitário e geocódigo|Situação e tipo de setor (classificações rurais e urbanas)|Tipos de setores censitários (a a i)|Povos e Comunidades Tradicionais: conceito, lista e autodeclaração|Categorias de áreas de PCTs e AIOs|Acesso a PCTs: consulta (OIT 169), FUNAI e SESAI|Endereço: padrão CNEFE, logradouro e localidade|CEP, número, modificador e complemento|Ponto de referência e sigilo estatístico|Coordenadas geográficas: latitude e longitude|Captura de coordenadas com GPS e DMC|Unidades recenseáveis, data e período de referência|Unidades não recenseáveis e produção de subsistência|Atividades e locais não recenseáveis|Conceito de estabelecimento agropecuário e exemplos de atividades|Produtores sem área|Estabelecimentos de indústrias e confinamento (boitel)|Propriedade rural x estabelecimento agropecuário|Estabelecimentos em mais de um setor (sede)|Áreas contínuas e não contínuas (as 4 condições)|Áreas não contínuas em municípios diferentes|Sucessão, partilha e litígio|Estabelecimentos novos ou sem produção|Exploração comunitária (coletiva e individual)"]];
 const TPLC={ibge:{exam:"2027-01-31",pt:240,cut:30}};
-const mk=(n,tp)=>({n,cfg:{...CFG,...(TPLC[tp]||{})},subs:(TPL[tp]||[]).map(a=>({id:a[0],n:a[1],c:a[2],w:a[3],q:a[4],p:a[5],t:a[6].split("|")})),ci:0,day:null,log:[],rev:[],err:[],pr:{},sim:[]});
+const mk=(n,tp)=>({n,cfg:{...CFG,...(TPLC[tp]||{})},subs:(TPL[tp]||[]).map(a=>({id:a[0],n:a[1],c:a[2],w:a[3],q:a[4],p:a[5],t:a[6].split("|")})),ci:0,day:null,log:[],rev:[],err:[],pr:{},dn:{},sim:[]});
 let S;try{S=JSON.parse(localStorage.getItem("rotaestudos"))}catch(e){}
 if(!S){let o=null;try{o=JSON.parse(localStorage.getItem("rotabb"))}catch(e){}
  const b=mk("BB — Agente Comercial","bb");if(o)Object.assign(b,o,{cfg:{...CFG,...o.cfg}});
  S={v:2,cur:"p1",profiles:{p1:b}}}
-function norm(){Object.values(S.profiles).forEach(p=>{const z=mk(p.n||"Concurso");Object.keys(z).forEach(k=>{if(p[k]==null)p[k]=z[k]});p.cfg={...CFG,...p.cfg};if(!Array.isArray(p.cfg.dias))p.cfg.dias=CFG.dias;p.subs.forEach(s=>{s.id=s.id||uid();s.t=Array.isArray(s.t)?s.t:[];s.w=+s.w||0;s.q=+s.q||0;s.p=+s.p||0;s.c=s.c||"#2f6fed";s.n=s.n||"Disciplina"});["log","rev","err","sim"].forEach(k=>p[k].forEach(x=>{x.id=x.id||uid()}));p.err.forEach(e=>{e.st=e.st||"pend"})});seed()}
+function norm(){Object.values(S.profiles).forEach(p=>{const z=mk(p.n||"Concurso");Object.keys(z).forEach(k=>{if(p[k]==null)p[k]=z[k]});p.cfg={...CFG,...p.cfg};if(!Array.isArray(p.cfg.dias))p.cfg.dias=CFG.dias;p.subs.forEach(s=>{s.id=s.id||uid();s.t=Array.isArray(s.t)?s.t:[];s.w=+s.w||0;s.q=+s.q||0;s.p=+s.p||0;s.c=s.c||"#2f6fed";s.n=s.n||"Disciplina"});["log","rev","err","sim"].forEach(k=>p[k].forEach(x=>{x.id=x.id||uid()}));p.err.forEach(e=>{e.st=e.st||"pend"});if(!p.dn||typeof p.dn!=="object")p.dn={};p.subs.forEach(s=>{if(!Array.isArray(p.dn[s.id]))p.dn[s.id]=s.t.slice(0,Math.min((p.pr&&p.pr[s.id])||0,s.t.length))})});seed()}
 function seed(){S.seeded=Array.isArray(S.seeded)?S.seeded:[];if(!S.seeded.includes("ibge")){S.seeded.push("ibge");if(!Object.values(S.profiles).some(p=>p.n==="IBGE — Recenseador (Censo Agro)"))S.profiles["p"+uid()]=mk("IBGE — Recenseador (Censo Agro)","ibge")}}
 norm();
 const P=()=>S.profiles[S.cur];
 const save=()=>{try{localStorage.setItem("rotaestudos",JSON.stringify(S));return 1}catch(e){toast("Sem espaço para salvar. Exclua fotos antigas ou exporte um backup.");return 0}};
 save();
 const sb=(p,id)=>p.subs.find(x=>x.id===id)||{n:"(disciplina removida)",c:"#8a93a8",t:[],w:0};
+const dnl=(p,s)=>{if(!p.dn||typeof p.dn!=="object")p.dn={};if(!Array.isArray(p.dn[s]))p.dn[s]=[];return p.dn[s]};
+const nxt=(p,id)=>{const d=dnl(p,id),t=sb(p,id).t.find(x=>!d.includes(x));return t===undefined?null:t};
+const defTp=(p,id)=>{const t=nxt(p,id);return t!==null?t:(sb(p,id).t[0]||"")};
 const cyc=p=>p.subs.flatMap(s=>Array.from({length:s.w},(_,i)=>({id:s.id,k:(i+.5)/s.w}))).sort((a,b)=>a.k-b.k||a.id.localeCompare(b.id)).map(x=>x.id);
 const BM=p=>Math.max(10,p.cfg.th+p.cfg.qm+p.cfg.em);
 const PH=p=>[["Teoria",p.cfg.th],["Questões",p.cfg.qm],["Caderno de erros",p.cfg.em]].filter(x=>x[1]>0);
@@ -132,9 +135,9 @@ function hoje(){
  let seg="",cards="";
  if(!cy.length)cards=`<div class="card">Este concurso ainda não tem disciplinas no ciclo. Adicione disciplinas em Metas e defina os blocos por ciclo.</div>`;
  else for(let k=0;k<Math.max(n,done+1);k++){
-  const id=cy[(p.day.ci0+k)%cy.length],o=sb(p,id),ti=p.pr[id]||0,tp=(o.t[Math.min(ti,o.t.length-1)]||o.n)+(o.t.length&&ti>=o.t.length?" (revisão geral)":"");
+  const id=cy[(p.day.ci0+k)%cy.length],o=sb(p,id),nt=nxt(p,id),tp=nt!==null?nt:(o.t[0]?o.t[0]+" (revisão geral)":o.n);
   seg+=`<i style="${k<done?"background:"+o.c:""}"></i>`;
-  cards+=`<div class="card" style="border-left:6px solid ${o.c};${k<done?"opacity:.55":""}"><div class="row sp"><b>${E(o.n)}</b><span class="tag">${k<done?"feito":(k==done&&done>=n)?"bônus":bm+" min"}</span></div><div>${E(tp)}</div><div class="mu">${p.cfg.th} min de teoria, ${p.cfg.qm} de questões e ${p.cfg.em} no caderno de erros.</div>${k==done?`<div class="row" style="margin-top:10px"><button class="btn" data-a="tstart" data-k="${k}" data-s="${id}">Iniciar cronômetro</button><button class="btn g" data-a="open" data-k="${k}" data-s="${id}">Já estudei</button></div>`:""}</div>`;
+  cards+=`<div class="card" style="border-left:6px solid ${o.c};${k<done?"opacity:.55":""}"><div class="row sp"><b>${E(o.n)}</b><span class="tag">${k<done?"feito":(k==done&&done>=n)?"bônus":bm+" min"}</span></div><div><span class="mu">Sugerido:</span> ${E(tp)}</div><div class="mu">${p.cfg.th} min de teoria, ${p.cfg.qm} de questões e ${p.cfg.em} no caderno de erros.</div>${k==done?`<div class="row" style="margin-top:10px"><button class="btn" data-a="tstart" data-k="${k}" data-s="${id}">Iniciar cronômetro</button><button class="btn g" data-a="open" data-k="${k}" data-s="${id}">Já estudei</button></div>`:""}</div>`;
  }
  const due=p.rev.filter(r=>r.due<=T);
  const rv=due.length?due.slice(0,6).map(r=>`<div class="card row sp"><div><b>${E(r.p)}</b><div class="mu">${E(sb(p,r.s).n)} · ${r.n}ª revisão</div></div><div class="row"><button class="btn g" data-a="rv" data-i="${r.id}">Feito</button><button class="btn g" ${del("rdel",r.id,"Excluir esta revisão agendada?")} aria-label="Excluir revisão">✕</button></div></div>`).join(""):`<p class="mu">Nenhuma revisão pendente. Elas aparecem 1, 7 e 30 dias depois de você terminar um tópico.</p>`;
@@ -230,7 +233,7 @@ function dev(p){
 }
 
 function dcont(p){
- const tot=sum(p.subs,s=>s.t.length),dn=sum(p.subs,s=>Math.min(p.pr[s.id]||0,s.t.length)),rest=tot-dn,dt=daysTo(p),ds=p.log.map(x=>x.d).sort();
+ const tot=sum(p.subs,s=>s.t.length),dn=sum(p.subs,s=>s.t.filter(x=>dnl(p,s.id).includes(x)).length),rest=tot-dn,dt=daysTo(p),ds=p.log.map(x=>x.d).sort();
  const span=ds.length?Math.min(28,Math.max(7,Math.round((new Date(T)-new Date(ds[0]))/864e5)+1)):28,rate=p.log.filter(e=>e.adv&&e.d>=addD(-27)).length/span;
  let fc;
  if(!tot)fc="Cadastre tópicos nas disciplinas para ver a previsão.";
@@ -238,7 +241,7 @@ function dcont(p){
  else if(!rate)fc="Conclua alguns tópicos para estimar o seu ritmo.";
  else{const days=Math.ceil(rest/rate);fc=`No ritmo atual (${nf(rate*7)} tópicos por semana), você termina o conteúdo em ${fdl(addD(days))}.`;
   if(dt!=null&&dt>0){const mg=dt-days;fc+=mg>=0?` <span style="color:var(--ok)">É ${mg} dias antes da prova.</span>`:` <span style="color:var(--bd)">É ${-mg} dias depois da prova. Seria preciso concluir ${nf(rest/(dt/7))} tópicos por semana.</span>`}}
- const map=p.subs.filter(s=>s.t.length).map(s=>{const pr=p.pr[s.id]||0,c=Math.min(pr,s.t.length);return `<div style="margin:14px 0"><div class="row sp"><b>${E(s.n)}</b><span class="mu">${pct(c,s.t.length)}% concluído</span></div><div class="row wr" style="gap:6px;margin-top:6px">${s.t.map((t,i)=>{const k=i<pr?2:p.log.some(e=>e.s==s.id&&e.b&&e.ti===i)?1:0;return `<span class="pill k${k}">${E(t)}</span>`}).join("")}</div></div>`}).join("")||`<p class="mu">Nenhum tópico cadastrado.</p>`;
+ const map=p.subs.filter(s=>s.t.length).map(s=>{const dd=dnl(p,s.id),c=s.t.filter(x=>dd.includes(x)).length;return `<div style="margin:14px 0"><div class="row sp"><b>${E(s.n)}</b><span class="mu">${pct(c,s.t.length)}% concluído</span></div><div class="row wr" style="gap:6px;margin-top:6px">${s.t.map(t=>{const k=dd.includes(t)?2:p.log.some(e=>e.s==s.id&&e.b&&e.tp===t)?1:0;return `<span class="pill k${k}">${E(t)}</span>`}).join("")}</div></div>`}).join("")||`<p class="mu">Nenhum tópico cadastrado.</p>`;
  const ec={};p.err.forEach(e=>{const k=TY[e.ty]?e.ty:"x";ec[k]=(ec[k]||0)+1});
  const er=Object.entries(ec).sort((a,b)=>b[1]-a[1]),top=er.find(x=>x[0]!="x");
  return `<div class="card"><b>Cobertura do edital</b><div style="font-size:30px;font-weight:800">${pct(dn,tot)}%</div><div class="bar"><i style="width:${pct(dn,tot)}%;background:var(--ok)"></i></div><div class="mu" style="margin-top:8px">${dn} de ${tot} tópicos concluídos. ${fc}</div></div>
@@ -311,15 +314,22 @@ const W=(h,b,a)=>`<div class="ov"><div class="sheet"><h2 style="margin-top:0">${
 const L=(t,i)=>`<label class="mu" style="margin-top:8px">${t}${i}</label>`;
 const N=(id,v)=>`<input id="${id}" type="number" inputmode="numeric" min="0" step="1" value="${v}">`;
 const pv=()=>sh.img?`<img src="${sh.img}" alt="Foto da questão" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px"><div><button class="btn g" data-a="irm" style="margin-top:6px">Remover foto</button></div>`:"";
+function tsel(p){const o=sb(p,sh.s);if(!o.t.includes(sh.tp))sh.tp=o.t[0]||"";
+ if(!o.t.length)return `<div class="mu" style="margin-top:8px">Esta disciplina não tem assuntos cadastrados. Adicione-os em Metas.</div>`;
+ const d=dnl(p,sh.s),nt=nxt(p,sh.s);
+ return `<label class="mu" style="margin-top:8px">Assunto estudado<select id="fdts">${o.t.map((t,i)=>`<option value="${i}" ${t===sh.tp?"selected":""}>${E(t)}${d.includes(t)?" · concluído":""}${t===nt?" · sugerido":""}</option>`).join("")}</select></label>`}
+function chk(p){const o=sb(p,sh.s),done=dnl(p,sh.s).includes(sh.tp);
+ return `<div id="fck" style="${o.t.length?"":"display:none"}"><label class="row mu" style="margin-top:12px"><input id="ft" type="checkbox" ${done?"":"checked"} style="width:auto;min-height:0;margin:0"> <span id="fl">${done?"Revisar este assunto":"Concluí este assunto"} (agenda revisões em 1, 7 e 30 dias)</span></label></div>`}
+function syncT(){const p=P(),o=sb(p,sh.s),done=!!sh.tp&&dnl(p,sh.s).includes(sh.tp),c=$("#ft"),l=$("#fl"),k=$("#fck");if(k)k.style.display=o.t.length?"":"none";if(c)c.checked=!!sh.tp&&!done;if(l)l.textContent=(done?"Revisar este assunto":"Concluí este assunto")+" (agenda revisões em 1, 7 e 30 dias)"}
 function SH(){
  const p=P();
  if(sh.t=="cf")return `<div class="ov"><div class="sheet"><h2 style="margin-top:0">Tem certeza?</h2><p>${sh.msg}</p><div class="row"><button class="btn g" data-a="close" style="flex:1">Cancelar</button><button class="btn" data-a="cfy" style="flex:1;background:var(--bd);color:#fff">${sh.lb||"Excluir"}</button></div></div></div>`;
  if(sh.t=="img")return `<div class="ov" data-a="close" style="align-items:center;justify-content:center;background:rgba(0,0,0,.88)"><img src="${sh.src}" alt="Foto da questão" style="max-width:100%;max-height:100%"></div>`;
- if(sh.t=="blk")return W(E(sb(p,sh.s).n),L("Tempo total do bloco (min)",N("fm",sh.m))+`<div class="g2">${L("Questões feitas",N("fq",10))}${L("Acertos",N("fc",0))}</div>`+L("Tempo gasto nas questões (min)",N("fqm",sh.qm))+`<label class="row mu" style="margin-top:12px"><input id="ft" type="checkbox" checked style="width:auto;min-height:0;margin:0"> Terminei este tópico (agenda revisões em 1, 7 e 30 dias)</label>`,"done");
+ if(sh.t=="blk")return W("Registrar bloco",L("Disciplina",`<select id="fds">${p.subs.map(x=>`<option value="${x.id}" ${x.id==sh.s?"selected":""}>${E(x.n)}</option>`).join("")}</select>`)+`<div id="fdt">${tsel(p)}</div>`+L("Tempo total do bloco (min)",N("fm",sh.m))+`<div class="g2">${L("Questões feitas",N("fq",10))}${L("Acertos",N("fc",0))}</div>`+L("Tempo gasto nas questões (min)",N("fqm",sh.qm))+`${chk(p)}`,"done");
  if(sh.t=="err"){const e=p.err.find(x=>x.id==sh.id)||{s:p.subs[0]?.id,t:"",st:"pend",ty:""};
   return W(sh.id?"Editar erro":"Novo erro",L("Disciplina",`<select id="es">${p.subs.map(s=>`<option value="${s.id}" ${s.id==e.s?"selected":""}>${E(s.n)}</option>`).join("")}</select>`)+L("Tipo de erro",`<select id="ety"><option value="">Sem tipo</option>${Object.entries(TY).map(([k,v])=>`<option value="${k}" ${k==e.ty?"selected":""}>${v}</option>`).join("")}</select>`)+L("O que errei e por quê",`<textarea id="et" rows="4" maxlength="2000">${E(e.t)}</textarea>`)+L("Foto da questão (opcional)",`<input id="ef" type="file" accept="image/*">`)+`<div id="ep">${pv()}</div>`+L("Situação",`<select id="eu"><option value="pend" ${e.st=="pend"?"selected":""}>Pendente</option><option value="ok" ${e.st=="ok"?"selected":""}>Dominado</option></select>`),"esave")}
  if(sh.t=="sub"){const s=p.subs.find(x=>x.id==sh.id)||{n:"",c:"#2f6fed",w:1,q:0,p:0,t:[]};
-  return W(sh.id?"Editar disciplina":"Nova disciplina",L("Nome",`<input id="sn" maxlength="60" value="${E(s.n)}">`)+`<div class="g2">${L("Cor",`<input id="sc" type="color" value="${s.c}">`)}${L("Blocos por ciclo (0 a 20)",N("sw",s.w))}${L("Questões na prova",N("sq",s.q))}${L("Pontos na prova",`<input id="sp" type="number" inputmode="decimal" min="0" step="0.5" value="${s.p}">`)}</div>`+L("Tópicos (um por linha)",`<textarea id="st" rows="6">${E(s.t.join("\n"))}</textarea>`),"ssave")}
+  return W(sh.id?"Editar disciplina":"Nova disciplina",L("Nome",`<input id="sn" maxlength="60" value="${E(s.n)}">`)+`<div class="g2">${L("Cor",`<input id="sc" type="color" value="${s.c}">`)}${L("Blocos por ciclo (0 a 20)",N("sw",s.w))}${L("Questões na prova",N("sq",s.q))}${L("Pontos na prova",`<input id="sp" type="number" inputmode="decimal" min="0" step="0.5" value="${s.p}">`)}</div>`+L("Tópicos (um por linha; renomear um assunto o desmarca como concluído)",`<textarea id="st" rows="6">${E(s.t.join("\n"))}</textarea>`),"ssave")}
  if(sh.t=="sim"){const ls=p.subs.filter(s=>s.q>0).length?p.subs.filter(s=>s.q>0):p.subs;
   return W("Registrar simulado",L("Nome ou fonte (opcional)",`<input id="xn" maxlength="60" placeholder="Ex.: Simulado 3">`)+`<div class="g2">${L("Data",`<input id="xd" type="date" value="${T}" max="${T}">`)}${L("Tempo gasto (min)",N("xm",""))}</div>`+L("Questões em branco (opcional)",N("xb",""))+`<div class="mu" style="margin-top:12px">Acertos por disciplina (deixe em branco o que não fez)</div>`+ls.map(s=>`<div class="row" style="margin-top:6px"><span style="flex:2" class="mu"><i class="dot" style="background:${s.c}"></i> ${E(s.n)}</span><input id="xa_${s.id}" type="number" inputmode="numeric" min="0" placeholder="acertos" style="flex:1;margin:0"><span class="mu">de</span><input id="xt_${s.id}" type="number" inputmode="numeric" min="0" value="${s.q}" style="flex:1;margin:0"></div>`).join("")+L("Observações (opcional)",`<textarea id="xo" rows="3" maxlength="500" placeholder="O que deu errado, o que revisar…"></textarea>`),"xsave")}
  return W("Novo concurso",L("Nome",`<input id="cn" maxlength="60" placeholder="Ex.: INSS, Receita Federal">`)+L("Começar com",`<select id="ct"><option value="">Em branco</option><option value="bb">Modelo BB — Agente Comercial</option><option value="ibge">Modelo IBGE — Recenseador (Censo Agro)</option></select>`),"csave");
@@ -359,7 +369,7 @@ function imp(txt){try{const d=JSON.parse(txt);if(!d||typeof d!=="object"||!d.pro
 const act={
  tab(d){tab=d.v;sh=null;render();scrollTo(0,0)},
  dt(d){dtab=d.v;render()},
- open(d){sh={t:"blk",k:+d.k,s:d.s,m:BM(P()),qm:P().cfg.qm};render()},
+ open(d){sh={t:"blk",k:+d.k,s:d.s,tp:defTp(P(),d.s),m:BM(P()),qm:P().cfg.qm};render()},
  close(){sh=null;render()},
  ask(d){sh={t:"cf",do:d.do,i:d.i,msg:d.msg,lb:d.lb};render()},
  cfy(){const a=sh;sh=null;act[a.do]({i:a.i})},
@@ -368,22 +378,22 @@ const act={
  tstart(d){const p=P(),ph=PH(p);if(!ph.length)return act.open(d);tmo={k:+d.k,s:d.s,i:0,left:ph[0][1]*6e4,el:0,pe:{},run:true,last:Date.now()};render()},
  tpause(){tmo.run=!tmo.run;tmo.last=Date.now();render()},
  tnext(){const ph=PH(P());if(tmo.i>=ph.length-1)return act.tfin();tmo.i++;tmo.left=ph[tmo.i][1]*6e4;tmo.run=true;tmo.last=Date.now();render()},
- tfin(){const m=Math.max(1,Math.round(tmo.el/6e4));sh={t:"blk",k:tmo.k,s:tmo.s,m,qm:Math.min(m,Math.round((tmo.pe["Questões"]||0)/6e4))};tmo=null;render()},
+ tfin(){const m=Math.max(1,Math.round(tmo.el/6e4));sh={t:"blk",k:tmo.k,s:tmo.s,tp:defTp(P(),tmo.s),m,qm:Math.min(m,Math.round((tmo.pe["Questões"]||0)/6e4))};tmo=null;render()},
  tcancel(){tmo.cf=1;render()},tback(){tmo.cf=0;render()},tdrop(){tmo=null;render()},
  done(){
-  const p=P(),o=sb(p,sh.s),m=iv("fm"),q=iv("fq"),c=iv("fc"),qm=iv("fqm"),ti=p.pr[sh.s]||0;
+  const p=P(),o=sb(p,sh.s),m=iv("fm"),q=iv("fq"),c=iv("fc"),qm=iv("fqm");
   if(!(Number.isInteger(m)&&m>=1&&m<=600))return bad("Informe o tempo total em minutos, de 1 a 600.");
   if(!(Number.isInteger(q)&&q>=0&&q<=500))return bad("Informe as questões feitas, de 0 a 500.");
   if(!(Number.isInteger(c)&&c>=0))return bad("Informe os acertos (0 ou mais).");
   if(c>q)return bad("Os acertos não podem ser maiores que as questões feitas.");
   if(!(Number.isInteger(qm)&&qm>=0))return bad("Informe o tempo nas questões em minutos (0 ou mais).");
   if(qm>m)return bad("O tempo nas questões não pode passar do tempo total do bloco.");
-  const tp=o.t[Math.min(ti,o.t.length-1)]||o.n,e={id:uid(),d:T,s:sh.s,m,qm:q?qm:0,q,c,b:1,ti,tp,rid:[]};
-  if($("#ft").checked){e.adv=1;[1,7,30].forEach((n,j)=>{const r={id:uid(),s:sh.s,p:tp,n:j+1,due:addD(n)};p.rev.push(r);e.rid.push(r.id)});p.pr[sh.s]=ti+1}
+  const tp=sh.tp&&o.t.includes(sh.tp)?sh.tp:"",ti=tp?o.t.indexOf(tp):null,e={id:uid(),d:T,s:sh.s,m,qm:q?qm:0,q,c,b:1,ti,tp,rid:[]};
+  const ck=$("#ft");if(tp&&ck&&ck.checked){[1,7,30].forEach((n,j)=>{const r={id:uid(),s:sh.s,p:tp,n:j+1,due:addD(n)};p.rev.push(r);e.rid.push(r.id)});const dd=dnl(p,sh.s);if(!dd.includes(tp)){dd.push(tp);e.adv=1}}
   p.log.push(e);p.ci++;sh=null;save();render()},
  rv(d){const p=P(),i=p.rev.findIndex(r=>r.id==d.i),r=p.rev[i];if(!r)return;p.rev.splice(i,1);p.log.push({id:uid(),d:T,s:r.s,m:10,q:0,c:0,rv:1,tp:r.p,rr:r});save();render()},
  rdel(d){mut(()=>{const p=P();p.rev=p.rev.filter(r=>r.id!=d.i)},"Revisão excluída.")},
- hdel(d){mut(()=>{const p=P(),i=p.log.findIndex(x=>x.id==d.i),e=p.log[i];if(!e)return;p.log.splice(i,1);if(e.rid)p.rev=p.rev.filter(r=>!e.rid.includes(r.id));if(e.rr)p.rev.push(e.rr);if(e.adv)p.pr[e.s]=Math.max(0,(p.pr[e.s]||1)-1);if(e.b&&e.d===T)p.ci=Math.max(p.day.ci0,p.ci-1)},"Registro excluído.")},
+ hdel(d){mut(()=>{const p=P(),i=p.log.findIndex(x=>x.id==d.i),e=p.log[i];if(!e)return;p.log.splice(i,1);if(e.rid)p.rev=p.rev.filter(r=>!e.rid.includes(r.id));if(e.rr)p.rev.push(e.rr);if(e.adv&&e.tp){const dd=dnl(p,e.s);p.dn[e.s]=dd.filter(x=>x!==e.tp)}if(e.b&&e.d===T)p.ci=Math.max(p.day.ci0,p.ci-1)},"Registro excluído.")},
  xopen(){sh={t:"sim"};render()},
  xsave(){
   const p=P(),d=val("xd"),m=val("xm")===""?null:iv("xm"),br=val("xb")===""?null:iv("xb"),r={};let tt=0;
@@ -409,7 +419,7 @@ const act={
   if(p.subs.some(s=>s.id!=sh.id&&s.n.toLowerCase()==n.toLowerCase()))return bad("Já existe uma disciplina com esse nome.");
   if(!(Number.isInteger(w)&&w>=0&&w<=20))return bad("Blocos por ciclo: use um número inteiro de 0 a 20.");
   if(!(Number.isInteger(q)&&q>=0&&q<=500))return bad("Questões na prova: use um número inteiro de 0 a 500.");
-  if(!(Number.isFinite(pt)&&pt>=0&&pt<=1000))return bad("Pontos na prova: use um número de 0 a 1000.");
+  if(!(Number.isFinite(pt)&&pt>=0&&pt<=1000))return bad("Pontos na prova: use um número de 0 a 1000.");const tl=val("st").split("\n").map(x=>x.trim()).filter(Boolean);if(new Set(tl).size!==tl.length)return bad("Há assuntos repetidos na lista.");
   const o={n,c:val("sc"),w,q,p:pt,t:val("st").split("\n").map(x=>x.trim()).filter(Boolean)},s=p.subs.find(x=>x.id==sh.id);if(s)Object.assign(s,o);else p.subs.push({id:uid(),...o});sh=null;save();render()},
  sdelsub(d){mut(()=>{const p=P();p.subs=p.subs.filter(x=>x.id!=d.i)},"Disciplina excluída.")},
  dia(d){const c=P().cfg,i=+d.i;if(c.dias.includes(i)&&c.dias.length==1)return toast("Mantenha pelo menos um dia de estudo.");c.dias=c.dias.includes(i)?c.dias.filter(x=>x!=i):[...c.dias,i];save();render()},
@@ -435,6 +445,8 @@ document.addEventListener("change",e=>{const t=e.target,d=t.dataset;
  else if("name" in d){const n=t.value.trim();if(n)P().n=n;else toast("O nome não pode ficar vazio.");save();render()}
  else if("cur" in d){S.cur=t.value;save();render()}
  else if(t.id=="ef"&&t.files[0]){const f=t.files[0];if(!/^image\//.test(f.type))return toast("Escolha um arquivo de imagem.");pic(f).then(u=>{sh.img=u;$("#ep").innerHTML=pv()}).catch(()=>toast("Não foi possível abrir essa imagem."))}
+ else if(t.id=="fds"){sh.s=t.value;sh.tp=defTp(P(),sh.s);$("#fdt").innerHTML=tsel(P());syncT()}
+ else if(t.id=="fdts"){sh.tp=sb(P(),sh.s).t[+t.value]||"";syncT()}
  else if(t.id=="fi"&&t.files[0]){const r=new FileReader();r.onload=()=>imp(r.result);r.readAsText(t.files[0])}});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if("serviceWorker" in navigator&&location.protocol.indexOf("http")==0)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
