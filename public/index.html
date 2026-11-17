@@ -58,6 +58,7 @@ svg text{fill:var(--mu);font-size:9px}
 <button data-a="tab" data-v="plano"><b>🗺️</b>Plano</button>
 <button data-a="tab" data-v="desemp"><b>📈</b>Desempenho</button>
 <button data-a="tab" data-v="erros"><b>📝</b>Erros</button>
+<button data-a="tab" data-v="mat"><b>📚</b>Materiais</button>
 <button data-a="tab" data-v="metas"><b>⚙️</b>Metas</button>
 </nav>
 <script>
@@ -90,17 +91,17 @@ TPL.ibge=[
 ["mt","Matemática","#e0823a",3,15,15,"Números naturais: operações, propriedades, múltiplos e divisores|Números inteiros e racionais: operações e problemas|Razão, proporção e divisão proporcional|Regra de três simples e porcentagem|Equações do 1º grau e problemas|Medidas de comprimento, superfície, volume, massa e tempo|Áreas, perímetros e volumes|Tabelas, gráficos e quadros informativos|Mapas, croquis, esquemas e representações gráficas"],
 ["ct","Conhecimentos Técnicos (apostila do Censo Agro)","#0f8f6f",6,30,30,"IBGE: missão, história (1936) e rede (27 SES e 566 agências)|Censo Agropecuário: conceito de censo e termos agropecuário, florestal e aquícola|12º Censo: histórico dos censos (1920 a 2017) e objetivos (a apostila cita referência 2025 e 2026)|12º Censo: concepção (FAO), abrangência e impactos (Pronaf)|Estrutura permanente e temporária (Sede, SES, CNQ e CEQ)|Postos censitários e cargos (AOR, ACA, ACI, ACR, ACS; edital diz Agente e apostila diz Assistente)|Funções do Analista Censitário e do ACQ|Atribuições do ACR, do ACS e do Recenseador|Posto censitário e papel do Recenseador|Instrumentos: setor censitário, Mapa do Setor, Descritivo e MME|DMC: mapa digital, lista de endereços (lista prévia) e questionários|Manual do Recenseador|Navegação em campo e legenda do mapa|Escala e cálculo de distâncias (ex.: 1:50.000)|Imagem de satélite: forma, tamanho, localização e cores|Descritivo do setor: ponto inicial e final e perímetro|Delimitadores de setor (rios, rodovias, caminhos e linhas secas)|Setores a excluir, estruturas não setorizadas e acessibilidade|Divisão político-administrativa (UFs, municípios, distritos e subdistritos)|Setor censitário e geocódigo|Situação e tipo de setor (classificações rurais e urbanas)|Tipos de setores censitários (a a i)|Povos e Comunidades Tradicionais: conceito, lista e autodeclaração|Categorias de áreas de PCTs e AIOs|Acesso a PCTs: consulta (OIT 169), FUNAI e SESAI|Endereço: padrão CNEFE, logradouro e localidade|CEP, número, modificador e complemento|Ponto de referência e sigilo estatístico|Coordenadas geográficas: latitude e longitude|Captura de coordenadas com GPS e DMC|Unidades recenseáveis, data e período de referência|Unidades não recenseáveis e produção de subsistência|Atividades e locais não recenseáveis|Conceito de estabelecimento agropecuário e exemplos de atividades|Produtores sem área|Estabelecimentos de indústrias e confinamento (boitel)|Propriedade rural x estabelecimento agropecuário|Estabelecimentos em mais de um setor (sede)|Áreas contínuas e não contínuas (as 4 condições)|Áreas não contínuas em municípios diferentes|Sucessão, partilha e litígio|Estabelecimentos novos ou sem produção|Exploração comunitária (coletiva e individual)"]];
 const TPLC={ibge:{exam:"2027-01-31",pt:240,cut:30}};
-const mk=(n,tp)=>({n,cfg:{...CFG,...(TPLC[tp]||{})},subs:(TPL[tp]||[]).map(a=>({id:a[0],n:a[1],c:a[2],w:a[3],q:a[4],p:a[5],t:a[6].split("|")})),ci:0,day:null,log:[],rev:[],err:[],pr:{},dn:{},sim:[]});
+const mk=(n,tp)=>({n,cfg:{...CFG,...(TPLC[tp]||{})},subs:(TPL[tp]||[]).map(a=>({id:a[0],n:a[1],c:a[2],w:a[3],q:a[4],p:a[5],t:a[6].split("|")})),ci:0,day:null,log:[],rev:[],err:[],pr:{},dn:{},mat:[],sim:[]});
 let S;try{S=JSON.parse(localStorage.getItem("rotaestudos"))}catch(e){}
 if(!S){let o=null;try{o=JSON.parse(localStorage.getItem("rotabb"))}catch(e){}
  const b=mk("BB — Agente Comercial","bb");if(o)Object.assign(b,o,{cfg:{...CFG,...o.cfg}});
  S={v:2,cur:"p1",profiles:{p1:b}}}
 function norm(){Object.values(S.profiles).forEach(p=>{const z=mk(p.n||"Concurso");Object.keys(z).forEach(k=>{if(p[k]==null)p[k]=z[k]});p.cfg={...CFG,...p.cfg};if(!Array.isArray(p.cfg.dias))p.cfg.dias=CFG.dias;p.subs.forEach(s=>{s.id=s.id||uid();s.t=Array.isArray(s.t)?s.t:[];s.w=+s.w||0;s.q=+s.q||0;s.p=+s.p||0;s.c=s.c||"#2f6fed";s.n=s.n||"Disciplina"});["log","rev","err","sim"].forEach(k=>p[k].forEach(x=>{x.id=x.id||uid()}));p.err.forEach(e=>{e.st=e.st||"pend"});if(!p.dn||typeof p.dn!=="object")p.dn={};p.subs.forEach(s=>{if(!Array.isArray(p.dn[s.id]))p.dn[s.id]=s.t.slice(0,Math.min((p.pr&&p.pr[s.id])||0,s.t.length))})});seed()}
-function seed(){S.seeded=Array.isArray(S.seeded)?S.seeded:[];if(!S.seeded.includes("ibge")){S.seeded.push("ibge");if(!Object.values(S.profiles).some(p=>p.n==="IBGE — Recenseador (Censo Agro)"))S.profiles["p"+uid()]=mk("IBGE — Recenseador (Censo Agro)","ibge")}}
+function seed(){S.seeded=Array.isArray(S.seeded)?S.seeded:[];if(!S.seeded.includes("ibge")){S.seeded.push("ibge");if(!Object.values(S.profiles).some(p=>p.n==="IBGE — Recenseador (Censo Agro)"))S.profiles[S.profiles.pibge?"p"+uid():"pibge"]=mk("IBGE — Recenseador (Censo Agro)","ibge")}}
 norm();
 const P=()=>S.profiles[S.cur];
-const save=()=>{try{localStorage.setItem("rotaestudos",JSON.stringify(S));return 1}catch(e){toast("Sem espaço para salvar. Exclua fotos antigas ou exporte um backup.");return 0}};
-save();
+const save=nd=>{try{localStorage.setItem("rotaestudos",JSON.stringify(S));if(!nd)syncTouch();return 1}catch(e){toast("Sem espaço para salvar. Exclua fotos antigas ou exporte um backup.");return 0}};
+save(1);
 const sb=(p,id)=>p.subs.find(x=>x.id===id)||{n:"(disciplina removida)",c:"#8a93a8",t:[],w:0};
 const dnl=(p,s)=>{if(!p.dn||typeof p.dn!=="object")p.dn={};if(!Array.isArray(p.dn[s]))p.dn[s]=[];return p.dn[s]};
 const nxt=(p,id)=>{const d=dnl(p,id),t=sb(p,id).t.find(x=>!d.includes(x));return t===undefined?null:t};
@@ -127,7 +128,7 @@ const wd=s=>{const[y,m,d]=s.split("-");return new Date(y,m-1,d).getDay()};
 const dayN=(p,s)=>p.cfg.dias.includes(wd(s))?nb(p):0;
 const pw=s=>s.p||s.q||0;
 const iv=id=>{const v=$("#"+id).value.trim();return v===""?NaN:Number(v)};
-const bad=m=>{$("#er").textContent=m};
+const bad=m=>{const e=$("#er");if(e)e.textContent=m;else toast(m)};
 const del=(a,i,m,lb)=>`data-a="ask" data-do="${a}" data-i="${i}" data-msg="${E(m)}"${lb?` data-lb="${lb}"`:""}`;
 
 function hoje(){
@@ -278,7 +279,7 @@ function erros(){
  const l=p.err.filter(e=>(F.st=="all"||e.st==F.st)&&(!F.s||e.s==F.s)&&(!F.ty||(F.ty=="x"?!TY[e.ty]:e.ty==F.ty))&&(!q||e.t.toLowerCase().includes(q)));
  l.sort((a,b)=>F.o=="old"?a.d.localeCompare(b.d):F.o=="sub"?sb(p,a.s).n.localeCompare(sb(p,b.s).n):b.d.localeCompare(a.d));
  const op=(v,t,c)=>`<option value="${v}" ${c==v?"selected":""}>${t}</option>`;
- const cards=l.map(e=>`<div class="card" style="border-left:6px solid ${sb(p,e.s).c};${e.st=="ok"?"opacity:.6":""}"><div class="row sp wr"><span class="tag">${E(sb(p,e.s).n)}</span><span class="mu">${TY[e.ty]?TY[e.ty]+" · ":""}${fd(e.d)}${e.st=="ok"?" · dominado":""}</span></div>${e.img?`<img src="${e.img}" alt="Foto da questão" data-a="imgv" data-i="${e.id}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px">`:""}<div style="margin:8px 0;white-space:pre-wrap">${E(e.t)}</div><div class="row wr"><button class="btn g" data-a="eopen" data-i="${e.id}">Editar</button><button class="btn g" data-a="etog" data-i="${e.id}">${e.st=="ok"?"Reabrir":"Já domino"}</button><button class="btn g" ${del("edel",e.id,"Excluir este erro do caderno?")}>Excluir</button></div></div>`).join("")||`<p class="mu">${p.err.length?"Nenhum erro com esses filtros.":"Quando errar uma questão, anote aqui o assunto, o tipo de erro e, se quiser, uma foto. Revisar este caderno vale mais do que resolver questões novas."}</p>`;
+ const cards=l.map(e=>`<div class="card" style="border-left:6px solid ${sb(p,e.s).c};${e.st=="ok"?"opacity:.6":""}"><div class="row sp wr"><span class="tag">${E(sb(p,e.s).n)}</span><span class="mu">${TY[e.ty]?TY[e.ty]+" · ":""}${fd(e.d)}${e.st=="ok"?" · dominado":""}</span></div>${e.img&&e.img!=="@"?`<img src="${e.img}" alt="Foto da questão" data-a="imgv" data-i="${e.id}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px">`:""}<div style="margin:8px 0;white-space:pre-wrap">${E(e.t)}</div><div class="row wr"><button class="btn g" data-a="eopen" data-i="${e.id}">Editar</button><button class="btn g" data-a="etog" data-i="${e.id}">${e.st=="ok"?"Reabrir":"Já domino"}</button><button class="btn g" ${del("edel",e.id,"Excluir este erro do caderno?")}>Excluir</button></div></div>`).join("")||`<p class="mu">${p.err.length?"Nenhum erro com esses filtros.":"Quando errar uma questão, anote aqui o assunto, o tipo de erro e, se quiser, uma foto. Revisar este caderno vale mais do que resolver questões novas."}</p>`;
  return `<h1>Caderno de erros</h1>
 <div class="g2"><select data-f="st" aria-label="Situação">${op("pend","Pendentes",F.st)}${op("ok","Dominados",F.st)}${op("all","Todos",F.st)}</select>
 <select data-f="s" aria-label="Disciplina">${op("","Todas as disciplinas",F.s)}${p.subs.map(s=>op(s.id,E(s.n),F.s)).join("")}</select>
@@ -291,7 +292,7 @@ function erros(){
 function metas(){
  const p=P(),c=p.cfg,nbk=nb(p),bm=BM(p),rest=c.min-nbk*bm;
  const F2=[["min","Tempo de estudo por dia (min)"],["th","Teoria por bloco (min)"],["qm","Questões por bloco (min)"],["em","Caderno de erros por bloco (min)"],["qg","Meta de questões por semana"],["ag","Meta de acertos (%)"],["cut","Nota de corte de referência (0 a 100)"],["pt","Duração da prova (min)"]];
- const sl=p.subs.map(s=>`<div class="card row sp" style="border-left:6px solid ${s.c}"><div><b>${E(s.n)}</b><div class="mu">${s.w} blocos por ciclo · ${s.t.length} tópicos</div></div><div class="row"><button class="btn g" data-a="sopen" data-i="${s.id}">Editar</button><button class="btn g" ${del("sdelsub",s.id,"Excluir a disciplina “"+s.n+"”? Os registros antigos continuam no histórico.")} aria-label="Excluir disciplina">✕</button></div></div>`).join("")||`<p class="mu">Nenhuma disciplina. Adicione a primeira.</p>`;
+ const sl=p.subs.map(s=>`<div class="card row sp" style="border-left:6px solid ${s.c}"><div><b>${E(s.n)}</b><div class="mu">${s.w} blocos por ciclo · ${s.t.length} tópicos</div></div><div class="row"><button class="btn g" data-a="sopen" data-i="${s.id}">Editar</button><button class="btn g" ${del("sdelsub",s.id,"Excluir a disciplina “"+s.n+"”? Os registros antigos continuam no histórico, e os materiais dela serão removidos.")} aria-label="Excluir disciplina">✕</button></div></div>`).join("")||`<p class="mu">Nenhuma disciplina. Adicione a primeira.</p>`;
  const kb=Math.round(JSON.stringify(S).length/1024);
  return `<h1>Metas e ajustes</h1>
 <div class="card"><b>Concurso ativo</b><label class="mu" style="margin-top:6px">Selecionar<select data-cur>${Object.entries(S.profiles).map(([k,v])=>`<option value="${k}" ${k==S.cur?"selected":""}>${E(v.n)}</option>`).join("")}</select></label>
@@ -302,12 +303,12 @@ function metas(){
 <div class="mu" style="margin-top:10px">Dias de estudo</div><div class="row" style="gap:6px;margin-top:4px">${DW.map((x,i)=>`<button class="btn ${c.dias.includes(i)?"":"g"}" data-a="dia" data-i="${i}" style="flex:1;padding:0;min-width:0" aria-pressed="${c.dias.includes(i)}">${x}</button>`).join("")}</div>
 <p class="mu">Com ${c.min} min por dia e blocos de ${bm} min, o app planeja ${nbk} ${nbk==1?"bloco":"blocos"} por dia de estudo${rest>=10?`, e sobram ${rest} min para revisões`:""}. Fora dos dias de estudo, há um bloco bônus opcional.</p></div>
 <h2>Disciplinas</h2>${sl}<button class="btn" data-a="sopen" data-i="">Adicionar disciplina</button>
-${inst()}<h2>Backup</h2><div class="card"><div class="row wr"><button class="btn" data-a="exp">Exportar arquivo</button><button class="btn g" data-a="cpy">Copiar dados</button></div>
+<h2>Nuvem</h2><div id="syc">${syncCard()}</div>${inst()}<h2>Backup</h2><div class="card"><div class="row wr"><button class="btn" data-a="exp">Exportar arquivo</button><button class="btn g" data-a="cpy">Copiar dados</button></div>
 <label class="mu" style="margin-top:12px">Importar arquivo<input id="fi" type="file" accept=".json,application/json"></label>
 <label class="mu" style="margin-top:8px">Ou cole os dados aqui<textarea id="bk" rows="3"></textarea></label>
 <button class="btn g" data-a="impt" style="margin-top:8px">Importar texto</button>
-<p class="mu">Dados salvos neste aparelho: cerca de ${kb} KB (limite do navegador: cerca de 5.000 KB). Fotos ocupam a maior parte.</p></div>
-<button class="btn g" ${del("reset","","Apagar TODOS os dados do app, de todos os concursos?")} style="margin-top:14px;color:var(--bd)">Apagar todos os dados</button>`;
+<p class="mu">O backup inclui os materiais, então o arquivo pode ficar grande. “Copiar dados” não inclui arquivos.</p><p class="mu">Dados salvos neste aparelho: cerca de ${kb} KB (limite do navegador: cerca de 5.000 KB). Fotos ocupam a maior parte.</p></div>
+<button class="btn g" ${del("reset","","Apagar TODOS os dados do app, de todos os concursos?"+(SY&&SY.user?" Os dados da nuvem também serão substituídos.":""))} style="margin-top:14px;color:var(--bd)">Apagar todos os dados</button>`;
 }
 
 const W=(h,b,a)=>`<div class="ov"><div class="sheet"><h2 style="margin-top:0">${h}</h2>${b}<div class="er" id="er" role="alert"></div><div class="row" style="margin-top:12px"><button class="btn g" data-a="close" style="flex:1">Cancelar</button><button class="btn" data-a="${a}" style="flex:1">Salvar</button></div></div></div>`;
@@ -323,6 +324,7 @@ function chk(p){const o=sb(p,sh.s),done=dnl(p,sh.s).includes(sh.tp);
 function syncT(){const p=P(),o=sb(p,sh.s),done=!!sh.tp&&dnl(p,sh.s).includes(sh.tp),c=$("#ft"),l=$("#fl"),k=$("#fck");if(k)k.style.display=o.t.length?"":"none";if(c)c.checked=!!sh.tp&&!done;if(l)l.textContent=(done?"Revisar este assunto":"Concluí este assunto")+" (agenda revisões em 1, 7 e 30 dias)"}
 function SH(){
  const p=P();
+ if(sh.t=="sync")return `<div class="ov"><div class="sheet"><h2 style="margin-top:0">Dados diferentes na nuvem</h2><p>Este aparelho e a nuvem têm alterações diferentes. Como quer resolver? Você poderá desfazer logo em seguida.</p><div style="display:grid;gap:8px"><button class="btn" data-a="syncmerge">Mesclar os dois (recomendado)</button><button class="btn g" data-a="synccloud">Usar os da nuvem</button><button class="btn g" data-a="synclocal">Manter os deste aparelho</button></div><p class="mu">Mesclar junta registros, erros, simulados, materiais e assuntos concluídos dos dois lados. Itens excluídos em um lado podem reaparecer.</p><button class="btn g" data-a="close" style="width:100%">Decidir depois</button></div></div>`;
  if(sh.t=="cf")return `<div class="ov"><div class="sheet"><h2 style="margin-top:0">Tem certeza?</h2><p>${sh.msg}</p><div class="row"><button class="btn g" data-a="close" style="flex:1">Cancelar</button><button class="btn" data-a="cfy" style="flex:1;background:var(--bd);color:#fff">${sh.lb||"Excluir"}</button></div></div></div>`;
  if(sh.t=="img")return `<div class="ov" data-a="close" style="align-items:center;justify-content:center;background:rgba(0,0,0,.88)"><img src="${sh.src}" alt="Foto da questão" style="max-width:100%;max-height:100%"></div>`;
  if(sh.t=="blk")return W("Registrar bloco",L("Disciplina",`<select id="fds">${p.subs.map(x=>`<option value="${x.id}" ${x.id==sh.s?"selected":""}>${E(x.n)}</option>`).join("")}</select>`)+`<div id="fdt">${tsel(p)}</div>`+L("Tempo total do bloco (min)",N("fm",sh.m))+`<div class="g2">${L("Questões feitas",N("fq",10))}${L("Acertos",N("fc",0))}</div>`+L("Tempo gasto nas questões (min)",N("fqm",sh.qm))+`${chk(p)}`,"done");
@@ -332,6 +334,17 @@ function SH(){
   return W(sh.id?"Editar disciplina":"Nova disciplina",L("Nome",`<input id="sn" maxlength="60" value="${E(s.n)}">`)+`<div class="g2">${L("Cor",`<input id="sc" type="color" value="${s.c}">`)}${L("Blocos por ciclo (0 a 20)",N("sw",s.w))}${L("Questões na prova",N("sq",s.q))}${L("Pontos na prova",`<input id="sp" type="number" inputmode="decimal" min="0" step="0.5" value="${s.p}">`)}</div>`+L("Tópicos (um por linha; renomear um assunto o desmarca como concluído)",`<textarea id="st" rows="6">${E(s.t.join("\n"))}</textarea>`),"ssave")}
  if(sh.t=="sim"){const ls=p.subs.filter(s=>s.q>0).length?p.subs.filter(s=>s.q>0):p.subs;
   return W("Registrar simulado",L("Nome ou fonte (opcional)",`<input id="xn" maxlength="60" placeholder="Ex.: Simulado 3">`)+`<div class="g2">${L("Data",`<input id="xd" type="date" value="${T}" max="${T}">`)}${L("Tempo gasto (min)",N("xm",""))}</div>`+L("Questões em branco (opcional)",N("xb",""))+`<div class="mu" style="margin-top:12px">Acertos por disciplina (deixe em branco o que não fez)</div>`+ls.map(s=>`<div class="row" style="margin-top:6px"><span style="flex:2" class="mu"><i class="dot" style="background:${s.c}"></i> ${E(s.n)}</span><input id="xa_${s.id}" type="number" inputmode="numeric" min="0" placeholder="acertos" style="flex:1;margin:0"><span class="mu">de</span><input id="xt_${s.id}" type="number" inputmode="numeric" min="0" value="${s.q}" style="flex:1;margin:0"></div>`).join("")+L("Observações (opcional)",`<textarea id="xo" rows="3" maxlength="500" placeholder="O que deu errado, o que revisar…"></textarea>`),"xsave")}
+ if(sh.t=="mat"){const m=sh.id?(p.mat||[]).find(x=>x.id==sh.id):null,isL=m?!!m.url:false,s0=m?m.s:(sh.s&&p.subs.some(x=>x.id==sh.s)?sh.s:(p.subs[0]?p.subs[0].id:"")),tp0=m?m.tp:(sh.tp||""),c0=m?m.cat:(sh.cat||"pdf");
+  return W(m?"Editar material":"Novo material",
+   L("Disciplina",`<select id="mds">${p.subs.map(x=>`<option value="${x.id}" ${x.id==s0?"selected":""}>${E(x.n)}</option>`).join("")}</select>`)
+   +`<div id="mdtw">${mtsel(p,s0,tp0)}</div>`
+   +L("Tipo",`<select id="mtp">${MCAT.map(c=>`<option value="${c[0]}" ${c[0]==c0?"selected":""}>${c[1]}</option>`).join("")}</select>`)
+   +(m?"":L("Origem",`<select id="mor"><option value="file" ${isL?"":"selected"}>Arquivo do aparelho</option><option value="url" ${isL?"selected":""}>Link (site, vídeo, Drive…)</option></select>`))
+   +(m&&!isL?`<div class="mu" style="margin-top:8px">Arquivo guardado: ${E(m.nm)} (${fmtB(m.sz||0)}). Para trocar o arquivo, exclua este material e adicione outro.</div>`:"")
+   +(m?"":`<div id="mfw">${L("Arquivo (até 30 MB)",`<input id="mf" type="file">`)}</div>`)
+   +`<div id="muw" style="${isL||!m&&false?"":"display:none"}">${L("Link",`<input id="mu" type="url" inputmode="url" placeholder="https://" value="${m&&m.url?E(m.url):""}">`)}</div>`
+   +L("Nome",`<input id="mn" maxlength="80" value="${E(m?m.nm:"")}">`)
+   +L("Observação (opcional)",`<textarea id="mo" rows="3" maxlength="300">${E(m?m.note||"":"")}</textarea>`),"matsave")}
  return W("Novo concurso",L("Nome",`<input id="cn" maxlength="60" placeholder="Ex.: INSS, Receita Federal">`)+L("Começar com",`<select id="ct"><option value="">Em branco</option><option value="bb">Modelo BB — Agente Comercial</option><option value="ibge">Modelo IBGE — Recenseador (Censo Agro)</option></select>`),"csave");
 }
 function TS(){
@@ -356,10 +369,176 @@ function sug(p){
 }
 function sugHTML(p){const l=sug(p);if(!l.length)return"";
  return `<div class="card" style="border-left:6px solid var(--yl)"><b>Sugestão de ajuste do plano</b><div class="mu">Com base no seu acerto dos últimos 30 dias (meta: ${p.cfg.ag}%). O plano só muda se você confirmar.</div>${l.map(x=>`<div class="row sp" style="margin-top:8px"><span>${E(x.s.n)}</span><span class="mu">${x.a}% · ${x.s.w} → <b>${x.to}</b> blocos por ciclo</span></div>`).join("")}<div class="row" style="margin-top:10px"><button class="btn" data-a="sapply">Aplicar</button><button class="btn g" data-a="sskip">Agora não</button></div></div>`}
-const V={hoje,plano,desemp,erros,metas};
+// ---------- Materiais: arquivos no IndexedDB ("aprova-files"); metadados em S.profiles[..].mat ----------
+const MCAT=[["pdf","PDF / apostila"],["mapa","Mapa mental"],["foto","Foto"],["resumo","Resumo"],["questoes","Questões"],["outro","Outro"]];
+const MCL=Object.fromEntries(MCAT);
+const MMAX=30*1024*1024;
+let MF={s:"",t:"",c:"",q:""},THUMBS=[];
+const PEND=new Set();
+const fmtB=n=>n<1048576?Math.max(1,Math.round(n/1024))+" KB":(n/1048576).toFixed(1).replace(".",",")+" MB";
+let fdb=null;
+const fopen=()=>fdb?Promise.resolve(fdb):new Promise((ok,no)=>{let r;try{r=indexedDB.open("aprova-files",1)}catch(e){return no(e)}r.onupgradeneeded=()=>r.result.createObjectStore("f");r.onsuccess=()=>{fdb=r.result;ok(fdb)};r.onerror=()=>no(r.error)});
+const freq=(mode,fn)=>fopen().then(db=>new Promise((ok,no)=>{const t=db.transaction("f",mode),rq=fn(t.objectStore("f"));let res;if(rq)rq.onsuccess=()=>{res=rq.result};t.oncomplete=()=>ok(res);t.onerror=()=>no(t.error);t.onabort=()=>no(t.error)}));
+const rdab=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsArrayBuffer(b)});
+const b64=b=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsDataURL(b)});
+const fput=(id,b)=>rdab(b).then(buf=>freq("readwrite",st=>st.put({b:buf,t:b.type||""},id)));
+const fget=id=>freq("readonly",st=>st.get(id)).then(r=>r?new Blob([r.b],{type:r.t}):null);
+const fdel=id=>freq("readwrite",st=>st.delete(id));
+const fkeys=()=>freq("readonly",st=>st.getAllKeys()).then(k=>k||[]);
+const fclear=()=>freq("readwrite",st=>st.clear());
+function gcFiles(){fkeys().then(ks=>{const live=new Set([...PEND]);Object.values(S.profiles).forEach(p=>(p.mat||[]).forEach(m=>live.add(m.id)));ks.filter(k=>!live.has(k)).forEach(k=>fdel(k).catch(()=>{}))}).catch(()=>{})}
+async function filesOut(){const out={},live=new Set();Object.values(S.profiles).forEach(p=>(p.mat||[]).forEach(m=>{if(m.hf)live.add(m.id)}));try{const ks=await fkeys();for(const k of ks){if(!live.has(k))continue;const b=await fget(k);if(b)out[k]=await b64(b)}}catch(e){}return out}
+function fromDU(u){const i=u.indexOf(","),mt=u.slice(5,i).split(";")[0]||"",bin=atob(u.slice(i+1)),a=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)a[k]=bin.charCodeAt(k);return Promise.resolve(new Blob([a],{type:mt}))}
+function shrink(f){return new Promise(ok=>{if(f.type!=="image/jpeg"||f.size<=1.5*1024*1024)return ok(f);const u=URL.createObjectURL(f),im=new Image(),fin=b=>{URL.revokeObjectURL(u);ok(b||f)};im.onload=()=>{try{const k=Math.min(1,1800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext("2d");if(!x)return fin();x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);c.toBlob(b=>fin(b),"image/jpeg",.85)}catch(e){fin()}};im.onerror=()=>fin();im.src=u;setTimeout(()=>fin(),10000)})}
+function hyd(){THUMBS.forEach(u=>URL.revokeObjectURL(u));THUMBS=[];document.querySelectorAll("img[data-mthumb]").forEach(im=>{fget(im.dataset.mthumb).then(b=>{if(b&&im.isConnected){const u=URL.createObjectURL(b);THUMBS.push(u);im.src=u}}).catch(()=>{})})}
+function mtsel(p,s,tp){const o=sb(p,s);return `<label class="mu" style="margin-top:8px">Assunto<select id="mdt"><option value="" ${!tp?"selected":""}>Geral da disciplina</option>${o.t.map(t=>`<option value="${E(t)}" ${t===tp?"selected":""}>${E(t)}</option>`).join("")}</select></label>`}
+function mat(){
+ const p=P(),all=p.mat||[],opt=(v,t,c)=>`<option value="${E(v)}" ${c==v?"selected":""}>${t}</option>`;
+ const sel=MF.s?sb(p,MF.s):null,qq=MF.q.toLowerCase();
+ const l=all.filter(m=>(!MF.s||m.s==MF.s)&&(!MF.t||(MF.t=="__g"?!m.tp:m.tp==MF.t))&&(!MF.c||m.cat==MF.c)&&(!qq||(m.nm+" "+(m.note||"")).toLowerCase().includes(qq)));
+ const ti=m=>m.tp?sb(p,m.s).t.indexOf(m.tp)+1:0;
+ const ids=[...p.subs.map(x=>x.id),...new Set(l.map(m=>m.s))].filter((v,i,a)=>a.indexOf(v)===i);
+ const matCard=m=>{const s=sb(p,m.s),th=m.cat=="foto"&&m.hf;return `<div class="card" style="border-left:6px solid ${s.c}"><div class="row sp wr"><span class="tag">${E(MCL[m.cat]||"Outro")}</span><span class="mu">${fd(m.d)}${m.sz?" · "+fmtB(m.sz):""}${m.url?" · link":""}</span></div><div style="margin:8px 0"><b>${E(m.nm)}</b><div class="mu">${m.tp?E(m.tp):"Geral da disciplina"}</div></div>${m.note?`<div style="white-space:pre-wrap;margin-bottom:8px">${E(m.note)}</div>`:""}${th?`<img data-mthumb="${m.id}" alt="" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:8px">`:""}<div class="row wr"><button class="btn" data-a="matopen" data-i="${m.id}">${m.url?"Abrir link":"Abrir"}</button><button class="btn g" data-a="mateo" data-i="${m.id}">Editar</button><button class="btn g" ${del("matdel",m.id,"Excluir o material “"+m.nm+"”? "+(m.hf?"O arquivo será apagado deste aparelho.":"O link será removido."))}>Excluir</button></div></div>`};
+ const grp=ids.map(id=>({s:sb(p,id),items:l.filter(m=>m.s==id).sort((a,b)=>ti(a)-ti(b)||b.d.localeCompare(a.d))})).filter(g=>g.items.length);
+ return `<h1>Materiais</h1>
+<div class="mu">${all.length} ${all.length==1?"material":"materiais"} · ${fmtB(sum(all,m=>m.sz||0))} guardados neste aparelho</div>
+<div style="margin:10px 0"><button class="btn" data-a="matnew" style="width:100%">Adicionar material</button></div>
+<div class="g2"><select data-mf="s" aria-label="Disciplina">${opt("","Todas as disciplinas",MF.s)}${p.subs.map(x=>opt(x.id,E(x.n),MF.s)).join("")}</select>
+<select data-mf="t" aria-label="Assunto" ${sel?"":"disabled"}>${sel?opt("","Todos os assuntos",MF.t)+opt("__g","Geral da disciplina",MF.t)+sel.t.map(t=>opt(t,E(t),MF.t)).join(""):opt("","Todos os assuntos","")}</select>
+<select data-mf="c" aria-label="Tipo">${opt("","Todos os tipos",MF.c)}${MCAT.map(c=>opt(c[0],c[1],MF.c)).join("")}</select>
+<input data-mf="q" type="search" placeholder="Buscar no nome ou observação" value="${E(MF.q)}" aria-label="Buscar" style="grid-column:1/-1"></div>
+${grp.length?grp.map(g=>`<h2>${E(g.s.n)} <span class="mu">· ${g.items.length}</span></h2>${g.items.map(matCard).join("")}`).join(""):`<div class="card mu" style="margin-top:12px">${all.length?"Nenhum material com esses filtros.":"Nenhum material ainda. Guarde PDFs, mapas mentais, fotos de resumos ou links por disciplina e assunto."}</div>`}
+<p class="mu" style="margin-top:14px">Os arquivos ficam neste navegador e não são enviados para nenhum servidor. Inclua-os no backup em Metas.</p>`;
+}
+function saveMat(){
+ const p=P(),pid=S.cur,m=sh.id?(p.mat||[]).find(x=>x.id==sh.id):null;
+ const s=val("mds"),tp=val("mdt"),cat=val("mtp"),nm=val("mn").trim(),note=val("mo").trim().slice(0,300);
+ if(!p.subs.some(x=>x.id==s))return bad("Escolha uma disciplina. Cadastre uma em Metas se ainda não houver.");
+ if(!nm)return bad("Dê um nome ao material.");
+ if(!MCL[cat])return bad("Escolha o tipo do material.");
+ if(tp&&!sb(p,s).t.includes(tp))return bad("Escolha um assunto da disciplina ou deixe em Geral.");
+ const isUrl=m?!!m.url:val("mor")=="url";
+ let url="";
+ if(isUrl){url=val("mu").trim();if(!/^https?:\/\/\S+$/i.test(url))return bad("Informe um link começando com http:// ou https://");if(url.length>2000)return bad("Link muito longo.")}
+ if(m){sh=null;mut(()=>{Object.assign(m,{s,tp,cat,nm,note});if(isUrl)m.url=url},"Material atualizado.");return}
+ if(isUrl){sh=null;mut(()=>{p.mat=p.mat||[];p.mat.push({id:uid(),d:T,s,tp,cat,nm,note,url,hf:0,sz:0})},"Link guardado.");return}
+ const f=sh.file;if(!f)return bad("Escolha um arquivo.");
+ if(f.size>MMAX)return bad("Arquivo acima de 30 MB. Divida-o ou guarde um link.");
+ if(!("indexedDB" in window))return bad("Este navegador não permite guardar arquivos. Guarde um link.");
+ const id=uid();PEND.add(id);toast("Guardando arquivo…");
+ shrink(f).then(b=>fput(id,b).then(()=>{PEND.delete(id);const q=S.profiles[pid];if(!q)return fdel(id);sh=null;snap=JSON.stringify(S);q.mat=q.mat||[];q.mat.push({id,d:T,s,tp,cat,nm,note,url:"",hf:1,mt:b.type||f.type||"",sz:b.size||f.size});save();render();toast("Material guardado.",1)})).catch(()=>{PEND.delete(id);bad("Não foi possível guardar o arquivo. Pode faltar espaço no aparelho.")});
+}
+// ---------- Nuvem: login com Google e sincronização (Cloudflare Worker + D1) ----------
+// O app funciona 100% sem nuvem. Entrando com o Google, o estado (sem arquivos) e os arquivos
+// sobem em segundo plano, e os outros aparelhos recebem as mudanças.
+var SY;
+const SYK="aprova-sync",CHUNK=700000;
+let GISL=0,pushT=0,pollT=0,syncVer=0;
+SY=(()=>{let m={};try{m=JSON.parse(localStorage.getItem(SYK))||{}}catch(e){}return{rev:+m.rev||0,dirty:!!m.dirty,email:m.email||"",last:+m.last||0,cfg:null,user:null,msg:"",busy:0,conf:null}})();
+const syMeta=()=>{try{localStorage.setItem(SYK,JSON.stringify({rev:SY.rev,dirty:SY.dirty,email:SY.email,last:SY.last}))}catch(e){}};
+function syncTouch(){if(!SY)return;SY.dirty=true;syncVer++;syMeta();if(SY.user){clearTimeout(pushT);pushT=setTimeout(syncRun,2500)}}
+const aj=(path,o)=>{o=o||{};return fetch(path,{credentials:"same-origin",cache:"no-store",...o,headers:{"x-aprova":"1",...(o.headers||{})}})};
+const retry=async fn=>{try{return await fn()}catch(e){return await fn()}};
+// fotos do caderno de erros viram arquivos próprios; no estado fica só a marca "@"
+const strJSON=s=>JSON.stringify(s,(k,v)=>k==="img"&&typeof v==="string"&&v.startsWith("data:")?"@":v);
+const pristine=()=>Object.values(S.profiles).every(p=>!(p.log||[]).length&&!(p.err||[]).length&&!(p.sim||[]).length&&!(p.mat||[]).length&&!(p.rev||[]).length);
+const uiSync=()=>{const c=$("#syc");if(c)c.innerHTML=syncCard()};
+function fixImgs(rs){const im={};Object.values(S.profiles).forEach(p=>(p.err||[]).forEach(e=>{if(e.img&&e.img!=="@")im[e.id]=e.img}));Object.values(rs.profiles||{}).forEach(p=>(p.err||[]).forEach(e=>{if(e.img==="@"&&im[e.id])e.img=im[e.id]}));return rs}
+// mesclar = união por id (registros, erros, simulados, materiais, disciplinas, assuntos concluídos)
+function mergeState(a,b){
+ const o=JSON.parse(JSON.stringify(a));o.seeded=[...new Set([...(a.seeded||[]),...(b.seeded||[])])];
+ const uni=(x,y,f)=>{const m=new Map((x||[]).map(i=>[i.id,i]));(y||[]).forEach(i=>{const c=m.get(i.id);if(!c)m.set(i.id,i);else if(f)f(c,i)});return[...m.values()]};
+ Object.entries(b.profiles||{}).forEach(([id,bp])=>{
+  const ap=o.profiles[id]||Object.values(o.profiles).find(v=>v.n===bp.n);
+  if(!ap){o.profiles[id]=bp;return}
+  ["log","rev","sim","mat"].forEach(k=>{ap[k]=uni(ap[k],bp[k])});
+  ap.err=uni(ap.err,bp.err,(c,i)=>{if(!c.img&&i.img)c.img=i.img});
+  ap.subs=uni(ap.subs,bp.subs);
+  ap.dn=ap.dn||{};Object.entries(bp.dn||{}).forEach(([k,v])=>{ap.dn[k]=[...new Set([...(ap.dn[k]||[]),...v])]});
+  ap.ci=Math.max(ap.ci||0,bp.ci||0);
+  ap.log.sort((x,y)=>String(x.d).localeCompare(String(y.d)));ap.err.sort((x,y)=>String(y.d).localeCompare(String(x.d)));
+ });
+ return o}
+async function listFiles(){const r=await aj("/api/files");if(r.status==401)throw new Error("auth");if(!r.ok)throw new Error("files");return r.json()}
+async function upFiles(FL){
+ const have=new Set(FL.files.map(f=>f.id)),jobs=[];
+ Object.values(S.profiles).forEach(p=>{(p.mat||[]).forEach(m=>{if(m.hf&&!have.has(m.id))jobs.push({id:m.id,name:m.nm,mime:m.mt||""})});(p.err||[]).forEach(e=>{if(e.img&&e.img.startsWith("data:")&&!have.has("i_"+e.id))jobs.push({id:"i_"+e.id,name:"foto",e})})});
+ for(const j of jobs){
+  let data,mime=j.mime||"";
+  if(j.e){const u=j.e.img;mime=u.slice(5,u.indexOf(";"));data=u.slice(u.indexOf(",")+1)}
+  else{const b=await fget(j.id);if(!b)continue;mime=b.type||mime;const u=await b64(b);data=u.slice(u.indexOf(",")+1)}
+  const n=Math.max(1,Math.ceil(data.length/CHUNK));
+  for(let i=0;i<n;i++){
+   const r=await retry(()=>aj(`/api/file/${j.id}/${i}`,{method:"PUT",headers:{"content-type":"text/plain"},body:data.slice(i*CHUNK,(i+1)*CHUNK)}));
+   if(r.status==401)throw new Error("auth");
+   if(r.status==413){const x=await r.json().catch(()=>({}));SY.msg=x.error=="quota"?"Cota de arquivos da nuvem cheia: alguns materiais ficaram só neste aparelho.":"Arquivo grande demais para a nuvem.";await aj("/api/file/"+j.id,{method:"DELETE"}).catch(()=>{});break}
+   if(!r.ok)throw new Error("file "+r.status);
+   if(i==n-1){const d=await retry(()=>aj(`/api/file/${j.id}/done`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:j.name,mime,size:data.length,parts:n})}));if(!d.ok)throw new Error("done")}
+  }
+ }
+}
+async function dlOne(f){let s="";for(let i=0;i<f.parts;i++){const r=await retry(()=>aj(`/api/file/${f.id}/${i}`));if(!r.ok)throw new Error("dl");s+=await r.text()}return fromDU("data:"+(f.mime||"application/octet-stream")+";base64,"+s)}
+async function pullFiles(FL){
+ const srv=new Map(FL.files.map(f=>[f.id,f])),loc=new Set(await fkeys());let ch=0;
+ for(const p of Object.values(S.profiles)){
+  for(const m of p.mat||[])if(m.hf&&!loc.has(m.id)&&srv.has(m.id)){try{await fput(m.id,await dlOne(srv.get(m.id)));ch=1}catch(e){}}
+  for(const e of p.err||[])if(e.img==="@"&&srv.has("i_"+e.id)){try{e.img=await b64(await dlOne(srv.get("i_"+e.id)));save(1);ch=1}catch(er){}}
+ }
+ if(ch&&!sh&&!tmo)render()}
+// só roda depois de um envio bem-sucedido (nosso estado == estado da nuvem); ignora arquivos recentes
+async function gcServer(FL){const ref=new Set();Object.values(S.profiles).forEach(p=>{(p.mat||[]).forEach(m=>m.hf&&ref.add(m.id));(p.err||[]).forEach(e=>e.img&&ref.add("i_"+e.id))});for(const f of FL.files)if(!ref.has(f.id)&&f.created<FL.now-36e5)await aj("/api/file/"+f.id,{method:"DELETE"})}
+async function pushState(base,FL){
+ const ver=syncVer;
+ await upFiles(FL);
+ const r=await aj("/api/state?base="+base,{method:"PUT",headers:{"content-type":"text/plain"},body:strJSON(S)});
+ if(r.status==401)throw new Error("auth");
+ if(r.status==409){const g=await aj("/api/state");SY.conf={remote:g.status==204?"":await g.text(),rr:+g.headers.get("x-rev")||0};return"conflict"}
+ if(!r.ok)throw new Error("put "+r.status);
+ const j=await r.json();SY.rev=j.rev;if(syncVer===ver)SY.dirty=false;syMeta();
+ gcServer(FL).catch(()=>{});
+ if(SY.dirty){clearTimeout(pushT);pushT=setTimeout(syncRun,1500)}
+ return"ok"}
+function applyRemote(txt,rr){const rs=fixImgs(JSON.parse(txt));S=rs;norm();save(1);SY.rev=rr;SY.dirty=false;syMeta();if(!sh&&!tmo)render()}
+async function syncRun(){
+ if(!SY||!SY.user||SY.busy||!navigator.onLine)return;
+ SY.busy=1;SY.msg="";uiSync();
+ try{
+  const r=await aj("/api/state");
+  if(r.status==401)throw new Error("auth");
+  if(!r.ok&&r.status!=204)throw new Error("get");
+  const rr=+r.headers.get("x-rev")||0,txt=r.status==204?"":await r.text(),FL=await listFiles();let st="ok";
+  if(!rr||rr===SY.rev){if(!rr||SY.dirty)st=await pushState(rr,FL)}
+  else if((!SY.dirty&&SY.rev>0)||(SY.rev===0&&pristine()))applyRemote(txt,rr);
+  else{SY.conf={remote:txt,rr};st="conflict"}
+  if(st=="conflict"){if(!sh&&!tmo){sh={t:"sync"};render()}}
+  else{await pullFiles(FL);SY.last=Date.now();syMeta()}
+ }catch(e){if(e&&e.message=="auth"){SY.user=null;SY.msg="Sessão expirada. Entre de novo."}else SY.msg="Sem conexão com a nuvem. Tentaremos de novo."}
+ SY.busy=0;uiSync();if(tab=="metas")gisBtn()}
+function syncCard(){
+ const c=SY.cfg;
+ if(!c||!c.ok)return `<div class="card mu">Sincronização na nuvem indisponível nesta hospedagem. Publique na Cloudflare seguindo o README para ativar.</div>`;
+ if(!c.configured||!c.clientId)return `<div class="card mu">O servidor ainda não tem o login do Google configurado. Defina <b>GOOGLE_CLIENT_ID</b> e <b>ALLOWED_EMAILS</b> no wrangler.toml (veja o README).</div>`;
+ if(!SY.user)return `<div class="card"><b>Sincronizar na nuvem</b><div class="mu" style="margin:6px 0 10px">Entre com o Google para guardar seus dados e materiais e usar o app em outros aparelhos. Sem entrar, tudo continua funcionando só neste aparelho.</div><div id="gbtn" style="min-height:44px"></div>${SY.msg?`<div class="er">${E(SY.msg)}</div>`:""}</div>`;
+ const t=SY.last?new Date(SY.last).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"";
+ return `<div class="card"><b>Conectado</b><div class="mu">${E(SY.user.email)}</div><div style="margin:8px 0">${SY.busy?"Sincronizando…":SY.dirty?"Alterações aguardando envio":"Tudo sincronizado"}${t&&!SY.busy&&!SY.dirty?` <span class="mu">(${t})</span>`:""}</div>${SY.msg?`<div class="er">${E(SY.msg)}</div>`:""}<div class="row wr"><button class="btn" data-a="syncnow">Sincronizar agora</button><button class="btn g" data-a="syncout">Sair</button></div></div>`}
+function gisBtn(){const el=$("#gbtn");if(!el||!SY.cfg||!SY.cfg.clientId||SY.user)return;
+ const go=()=>{try{google.accounts.id.initialize({client_id:SY.cfg.clientId,ux_mode:"redirect",login_uri:location.origin+"/api/auth/google-redirect"});google.accounts.id.renderButton(el,{theme:"outline",size:"large",text:"signin_with",shape:"pill",locale:"pt-BR"})}catch(e){}};
+ if(window.google&&google.accounts&&google.accounts.id)return go();
+ if(!GISL){GISL=1;const s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;s.onload=()=>{GISL=2;gisBtn()};s.onerror=()=>{GISL=0;const e=$("#gbtn");if(e)e.textContent="Sem conexão com o Google."};document.head.appendChild(s)}}
+async function syncInit(){
+ try{const r=await aj("/api/config");if(!r.ok||!/json/.test(r.headers.get("content-type")||""))return;SY.cfg=await r.json()}catch(e){return}
+ if(!SY.cfg||!SY.cfg.ok)return;
+ const q=new URLSearchParams(location.search).get("login");
+ if(q){history.replaceState(null,"",location.pathname+location.hash);if(q!="ok")toast(q=="negado"?"Esta conta Google não está liberada neste servidor.":"Não foi possível entrar com o Google.")}
+ try{const r=await aj("/api/me");if(r.ok){SY.user=await r.json();if(SY.email&&SY.email!==SY.user.email){SY.rev=0;SY.dirty=true}SY.email=SY.user.email;syMeta();if(q=="ok")toast("Conectado como "+SY.email+".")}}catch(e){}
+ render();syncRun();
+ clearInterval(pollT);pollT=setInterval(()=>{if(!document.hidden)syncRun()},120000)}
+addEventListener("online",()=>syncRun());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncRun()});
+const V={hoje,plano,desemp,erros,metas,mat};
 function render(){
  T=ymd(new Date());const p=P();if(!p.day||p.day.d!==T)p.day={d:T,ci0:p.ci};
- $("#m").innerHTML=V[tab]();$("#sh").innerHTML=tmo?TS():sh?SH():"";
+ $("#m").innerHTML=V[tab]();if(tab=="mat")hyd();if(tab=="metas")gisBtn();$("#sh").innerHTML=tmo?TS():sh?SH():"";
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v==tab));
 }
 const val=id=>$("#"+id).value;
@@ -367,13 +546,24 @@ const CR={min:[15,720],th:[0,240],qm:[0,240],em:[0,240],qg:[0,2000],ag:[0,100],c
 function pic(f){return new Promise((ok,no)=>{const r=new FileReader();r.onerror=no;r.onload=()=>{const im=new Image();im.onerror=no;im.onload=()=>{const k=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok(c.toDataURL("image/jpeg",.6))};im.src=r.result};r.readAsDataURL(f)})}
 function imp(txt){try{const d=JSON.parse(txt);if(!d||typeof d!=="object"||!d.profiles||!d.profiles[d.cur]||!Object.values(d.profiles).every(x=>x&&typeof x==="object"))throw 0;pend=d;sh={t:"cf",do:"impgo",i:"",msg:"Importar vai substituir todos os dados atuais do app. Você poderá desfazer logo em seguida.",lb:"Importar"};render()}catch(e){toast("Arquivo inválido ou corrompido.")}}
 const act={
+ syncnow(){syncRun()},
+ async syncout(){try{await aj("/api/auth/logout",{method:"POST"})}catch(e){}SY.user=null;SY.msg="";syMeta();uiSync();gisBtn()},
+ syncmerge(){const c=SY.conf;if(!c)return;snap=JSON.stringify(S);S=mergeState(S,fixImgs(JSON.parse(c.remote||"{}")));norm();SY.rev=c.rr;SY.dirty=true;SY.conf=null;sh=null;save();render();toast("Dados mesclados.",1);syncRun()},
+ synccloud(){const c=SY.conf;if(!c)return;snap=JSON.stringify(S);S=fixImgs(JSON.parse(c.remote));norm();SY.rev=c.rr;SY.dirty=false;SY.conf=null;sh=null;save(1);syMeta();render();toast("Usando os dados da nuvem.",1);syncRun()},
+ synclocal(){const c=SY.conf;if(!c)return;SY.rev=c.rr;SY.dirty=true;SY.conf=null;sh=null;syMeta();render();syncRun()},
+ matnew(){sh={t:"mat",s:MF.s,tp:MF.t&&MF.t!="__g"?MF.t:"",cat:"pdf"};render()},
+ mateo(d){sh={t:"mat",id:d.i};render()},
+ matsave(){saveMat()},
+ matdel(d){const p=P(),m=(p.mat||[]).find(x=>x.id==d.i);if(!m)return;p.mat=p.mat.filter(x=>x.id!=d.i);snap=null;save();render();toast("Material excluído.");if(m.hf)fdel(m.id).catch(()=>{})},
+ matopen(d){const m=P().mat.find(x=>x.id==d.i);if(!m)return;if(m.url){window.open(m.url,"_blank","noopener,noreferrer");return}
+  fget(m.id).then(async b=>{if(!b&&SY&&SY.user){try{const FL=await listFiles(),f=FL.files.find(x=>x.id==m.id);if(f){b=await dlOne(f);await fput(m.id,b)}}catch(e){}}if(!b)return toast("Arquivo não encontrado neste aparelho.");const u=URL.createObjectURL(b),w=window.open(u,"_blank");if(!w){const a=document.createElement("a");a.href=u;a.download=m.nm;a.click()}setTimeout(()=>URL.revokeObjectURL(u),120000)}).catch(()=>toast("Não foi possível abrir o arquivo."))},
  tab(d){tab=d.v;sh=null;render();scrollTo(0,0)},
  dt(d){dtab=d.v;render()},
  open(d){sh={t:"blk",k:+d.k,s:d.s,tp:defTp(P(),d.s),m:BM(P()),qm:P().cfg.qm};render()},
  close(){sh=null;render()},
  ask(d){sh={t:"cf",do:d.do,i:d.i,msg:d.msg,lb:d.lb};render()},
  cfy(){const a=sh;sh=null;act[a.do]({i:a.i})},
- undo(){if(!snap)return;S=JSON.parse(snap);snap=null;save();$("#ts").innerHTML="";render()},
+ undo(){if(!snap)return;S=JSON.parse(snap);snap=null;save();$("#ts").innerHTML="";render();gcFiles()},
  async inst(){if(!ip)return;ip.prompt();try{await ip.userChoice}catch(e){}ip=null;render()},
  tstart(d){const p=P(),ph=PH(p);if(!ph.length)return act.open(d);tmo={k:+d.k,s:d.s,i:0,left:ph[0][1]*6e4,el:0,pe:{},run:true,last:Date.now()};render()},
  tpause(){tmo.run=!tmo.run;tmo.last=Date.now();render()},
@@ -406,13 +596,13 @@ const act={
   if(br!==null&&!(Number.isInteger(br)&&br>=0&&br<=tt))return bad("As questões em branco não podem passar do total de questões.");
   p.sim.push({id:uid(),d,nm:val("xn").trim(),tm:m,br,ob:val("xo").trim(),r});sh=null;save();render()},
  sdel(d){mut(()=>{const p=P();p.sim=p.sim.filter(x=>x.id!=d.i)},"Simulado excluído.")},
- eopen(d){const e=P().err.find(x=>x.id==d.i);sh={t:"err",id:d.i,img:e?e.img||"":""};render()},
+ eopen(d){const e=P().err.find(x=>x.id==d.i);sh={t:"err",id:d.i,img:e&&e.img!=="@"?e.img||"":""};render()},
  esave(){const p=P(),t=val("et").trim();if(!val("es"))return bad("Cadastre uma disciplina antes de anotar erros.");if(!t&&!sh.img)return bad("Descreva o erro ou adicione uma foto.");
-  const o={s:val("es"),t,ty:val("ety"),st:val("eu"),img:sh.img||""},e=p.err.find(x=>x.id==sh.id);if(e)Object.assign(e,o);else p.err.unshift({id:uid(),d:T,...o});sh=null;save();render()},
+  const e=p.err.find(x=>x.id==sh.id),o={s:val("es"),t,ty:val("ety"),st:val("eu"),img:sh.img||(e&&e.img==="@"?"@":"")};if(e)Object.assign(e,o);else p.err.unshift({id:uid(),d:T,...o});sh=null;save();render()},
  etog(d){const e=P().err.find(x=>x.id==d.i);if(e){e.st=e.st=="ok"?"pend":"ok";save();render()}},
  edel(d){mut(()=>{const p=P();p.err=p.err.filter(x=>x.id!=d.i)},"Erro excluído.")},
  irm(){sh.img="";$("#ep").innerHTML=""},
- imgv(d){const e=P().err.find(x=>x.id==d.i);if(e&&e.img){sh={t:"img",src:e.img};render()}},
+ imgv(d){const e=P().err.find(x=>x.id==d.i);if(e&&e.img&&e.img!=="@"){sh={t:"img",src:e.img};render()}},
  sopen(d){sh={t:"sub",id:d.i};render()},
  ssave(){const p=P(),n=val("sn").trim(),w=iv("sw"),q=iv("sq"),pt=iv("sp");
   if(!n)return bad("Dê um nome à disciplina.");
@@ -421,18 +611,18 @@ const act={
   if(!(Number.isInteger(q)&&q>=0&&q<=500))return bad("Questões na prova: use um número inteiro de 0 a 500.");
   if(!(Number.isFinite(pt)&&pt>=0&&pt<=1000))return bad("Pontos na prova: use um número de 0 a 1000.");const tl=val("st").split("\n").map(x=>x.trim()).filter(Boolean);if(new Set(tl).size!==tl.length)return bad("Há assuntos repetidos na lista.");
   const o={n,c:val("sc"),w,q,p:pt,t:val("st").split("\n").map(x=>x.trim()).filter(Boolean)},s=p.subs.find(x=>x.id==sh.id);if(s)Object.assign(s,o);else p.subs.push({id:uid(),...o});sh=null;save();render()},
- sdelsub(d){mut(()=>{const p=P();p.subs=p.subs.filter(x=>x.id!=d.i)},"Disciplina excluída.")},
+ sdelsub(d){mut(()=>{const p=P();p.subs=p.subs.filter(x=>x.id!=d.i);p.mat=(p.mat||[]).filter(m=>m.s!=d.i)},"Disciplina excluída.");setTimeout(gcFiles,9000)},
  dia(d){const c=P().cfg,i=+d.i;if(c.dias.includes(i)&&c.dias.length==1)return toast("Mantenha pelo menos um dia de estudo.");c.dias=c.dias.includes(i)?c.dias.filter(x=>x!=i):[...c.dias,i];save();render()},
  cnew(){sh={t:"conc"};render()},
  csave(){const n=val("cn").trim();if(!n)return bad("Dê um nome ao concurso.");const id="p"+uid();S.profiles[id]=mk(n,val("ct"));S.cur=id;sh=null;save();render()},
- cdel(){if(Object.keys(S.profiles).length<2)return;mut(()=>{delete S.profiles[S.cur];S.cur=Object.keys(S.profiles)[0]},"Concurso excluído.")},
- exp(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));a.download="aprova-"+T+".json";a.click()},
+ cdel(){if(Object.keys(S.profiles).length<2)return;mut(()=>{delete S.profiles[S.cur];S.cur=Object.keys(S.profiles)[0]},"Concurso excluído.");setTimeout(gcFiles,9000)},
+ exp(){toast("Preparando backup…");filesOut().then(files=>{const o=JSON.parse(JSON.stringify(S));o.files=files;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(o)],{type:"application/json"}));a.download="aprova-"+T+".json";a.click()}).catch(()=>toast("Não foi possível preparar o backup. Tente de novo."))},
  cpy(){const j=JSON.stringify(S);(navigator.clipboard?navigator.clipboard.writeText(j):Promise.reject()).then(()=>toast("Dados copiados.")).catch(()=>{$("#bk").value=j;$("#bk").select();toast("Copie o texto da caixa.")})},
  impt(){imp(val("bk"))},
- impgo(){mut(()=>{S=pend;norm()},"Dados importados.");pend=null},
+ impgo(){const d=pend;pend=null;if(!d)return;const files=d.files||{};delete d.files;const apply=()=>{snap=JSON.stringify(S);S=d;norm();save();render();toast("Dados importados.",1);setTimeout(gcFiles,9000)};const ks=Object.keys(files);if(!ks.length)return apply();Promise.all(ks.map(k=>fromDU(files[k]).then(b=>fput(k,b)))).then(apply).catch(()=>toast("Não foi possível restaurar os arquivos. Nada foi alterado."))},
  sapply(){const p=P(),l=sug(p);if(!l.length)return;mut(()=>{l.forEach(x=>{const s=p.subs.find(y=>y.id==x.s.id);if(s)s.w=x.to});p.adjD=T},"Plano ajustado.")},
  sskip(){P().adjD=T;save();render()},
- reset(){mut(()=>{S={v:2,cur:"p1",seeded:["ibge"],profiles:{p1:mk("Meu concurso","")}}},"Todos os dados apagados.")}
+ reset(){mut(()=>{S={v:2,cur:"p1",seeded:["ibge"],profiles:{p1:mk("Meu concurso","")}}},"Todos os dados apagados.");fclear().catch(()=>{})}
 };
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&!b.disabled&&act[b.dataset.a])act[b.dataset.a](b.dataset)});
 document.addEventListener("change",e=>{const t=e.target,d=t.dataset;
@@ -441,14 +631,20 @@ document.addEventListener("change",e=>{const t=e.target,d=t.dataset;
   else{let v=Math.round(+t.value);if(!Number.isFinite(v))v=c[k];const[lo,hi]=CR[k],cl=Math.min(hi,Math.max(lo,v));if(cl!=v)toast(`Valor ajustado ao limite permitido (${lo} a ${hi}).`);const old=c[k];c[k]=cl;if(["th","qm","em"].includes(k)&&c.th+c.qm+c.em<10){c[k]=old;toast("Um bloco precisa ter pelo menos 10 minutos no total.")}}
   save();render()}
  else if(d.f){F[d.f]=t.value;render()}
+ else if(d.mf){MF[d.mf]=t.value;if(d.mf=="s")MF.t="";render()}
  else if(d.g){G[d.g]=d.g=="rg"?+t.value:t.value;render()}
  else if("name" in d){const n=t.value.trim();if(n)P().n=n;else toast("O nome não pode ficar vazio.");save();render()}
- else if("cur" in d){S.cur=t.value;save();render()}
+ else if("cur" in d){S.cur=t.value;MF={s:"",t:"",c:"",q:""};save();render()}
  else if(t.id=="ef"&&t.files[0]){const f=t.files[0];if(!/^image\//.test(f.type))return toast("Escolha um arquivo de imagem.");pic(f).then(u=>{sh.img=u;$("#ep").innerHTML=pv()}).catch(()=>toast("Não foi possível abrir essa imagem."))}
  else if(t.id=="fds"){sh.s=t.value;sh.tp=defTp(P(),sh.s);$("#fdt").innerHTML=tsel(P());syncT()}
  else if(t.id=="fdts"){sh.tp=sb(P(),sh.s).t[+t.value]||"";syncT()}
+ else if(t.id=="mds"){$("#mdtw").innerHTML=mtsel(P(),t.value,"")}
+ else if(t.id=="mor"){$("#mfw")&&($("#mfw").style.display=t.value=="url"?"none":"");$("#muw").style.display=t.value=="url"?"":"none"}
+ else if(t.id=="mf"&&t.files[0]){const f=t.files[0];sh.file=f;if(!val("mn").trim())$("#mn").value=f.name;const tt=f.type||"";$("#mtp").value=/^image\//.test(tt)?"foto":/pdf/.test(tt)?"pdf":"outro"}
  else if(t.id=="fi"&&t.files[0]){const r=new FileReader();r.onload=()=>imp(r.result);r.readAsText(t.files[0])}});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if("serviceWorker" in navigator&&location.protocol.indexOf("http")==0)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 render();
+gcFiles();
+syncInit();
 </script></body></html>

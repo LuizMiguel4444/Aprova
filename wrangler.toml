@@ -1,0 +1,21 @@
+# Aprova na Cloudflare (plano gratuito): site + API no mesmo endereço.
+name = "aprova"
+main = "src/worker.js"
+compatibility_date = "2025-06-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aprova-db"
+database_id = "b77fc2e1-eaea-4cc7-9524-7e7bd6ef9190"
+
+[vars]
+# ID do cliente OAuth do Google (não é segredo). Veja o README.
+GOOGLE_CLIENT_ID = "1043056335567-md8tkl93c8gc469gd25h9uettq340snd.apps.googleusercontent.com"
+# E-mails que podem entrar, separados por vírgula. Vazio = ninguém entra.
+ALLOWED_EMAILS = "luizmiguel4444@gmail.com"
+# Limite de arquivos na nuvem, em MB (o plano gratuito do D1 tem 500 MB por banco).
+QUOTA_MB = "400"
